@@ -1,0 +1,46 @@
+const mongoose = require('mongoose');
+
+const bookingSchema = new mongoose.Schema({
+  userName: {
+    type: String,
+    required: true,
+  },
+  phoneNumber: {
+    type: String,
+    required: true,
+  },
+  pickupLocation: {
+    type: String,
+    required: true,
+  },
+  deliveryLocation: {
+    type: String,
+    required: true,
+  },
+  seatNumber: {
+    type: Number,
+    required: true,
+  },
+  travelDirection: {
+    type: String,
+    enum: ['YGN_TO_PYAY', 'PYAY_TO_YGN'],
+    required: true,
+  },
+  carTime: {
+    type: String,
+    enum: ['6:00 AM', '7:00 AM', '8:00 AM', '9:00 AM', '10:00 AM'],
+    required: true,
+  },
+  bookingDate: {
+    type: Date,
+    required: true,
+  },
+  isApproved: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const Booking = mongoose.model('Booking', bookingSchema);
+
+module.exports = Booking;
