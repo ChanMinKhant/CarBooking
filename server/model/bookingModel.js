@@ -19,6 +19,7 @@ const bookingSchema = new mongoose.Schema({
   },
   seatNumber: {
     type: Number,
+    enum: [1, 2, 3, 4],
     required: true,
   },
   travelDirection: {

@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
 const CustomError = require('../utils/CustomError');
 const asyncErrorHandler = require('../utils/asyncErrorHandler');
-const Account = require('../models/accountModel');
 const Token = require('../models/tokenModel');
 
 exports.verifyJWT = asyncErrorHandler(async (req, res, next) => {
@@ -21,8 +20,7 @@ exports.verifyJWT = asyncErrorHandler(async (req, res, next) => {
   const foundToken = await Token.findOne({ token });
   if (!foundToken) {
     res.clearCookie('jwt');
-    const msg = 'Your session has expired. Please log in again.';
-    const err = new CustomError(msg, 401);
+    const err = new CustomError('Your session has expired. Please log in again.', 401);
     return next(err);
   }
 
