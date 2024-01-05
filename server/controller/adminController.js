@@ -15,8 +15,13 @@ exports.createAdmin = asyncErrorHandler(async (req, res, next) => {
     const err = new CustomError('You are not allowed to create admin', 401);
     return next(err);
   }
-  const { username, password, email } = req.body;
-  const createdAdmin = await Admin.create({ username, password, email });
+  const { username, password, email, role } = req.body;
+  const createdAdmin = await Admin.create({
+    username,
+    password,
+    email,
+    role: role || 'admin',
+  });
   res.status(201).json({
     success: true,
     createdAdmin,
@@ -104,8 +109,15 @@ exports.getBookings = asyncErrorHandler(async (req, res, next) => {
 exports.approveBooking = asyncErrorHandler(async (req, res, next) => {
   const { id } = req.params;
   //search booking by id and update isApproved field to true and return updated booking
-  await Booking.findByIdAndUpdate(id, { isApproved: true }, { new: true });
-  res.status(200).json({ success: true });
+  const updatedBooking = await Booking.findByIdAndUpdate(
+    id,
+    { isApproved: true },
+    { new: true }
+  );
+  if (!updatedBooking) {
+    throw new CustomError('Booking not found', 404);
+  }
+  res.status(200).json({ success: true, updatedBooking });
 });
 
 // "http://api-url/:id"
