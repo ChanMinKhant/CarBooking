@@ -5,17 +5,41 @@ const Admin = require('./../model/adminModel');
 const Token = require('./../model/tokenModel');
 const jwt = require('jsonwebtoken');
 
+// create admin account
+// "http://api-url/createAdmin"
+exports.createAdmin = asyncErrorHandler(async (req, res, next) => {
+  // to create admin account , admin must be logged in and have superAdmin role find from fb as req.adminId
+  const adminId = req.account_id;
+  const admin = await Admin.findById(adminId);
+  if (admin.role !== 'superAdmin') {
+    const err = new CustomError('You are not allowed to create admin', 401);
+    return next(err);
+  }
+  const { username, password, email } = req.body;
+  const createdAdmin = await Admin.create({ username, password, email });
+  res.status(201).json({
+    success: true,
+    createdAdmin,
+  });
+});
+
 // "http://api-url/login"
 // send email to admin if another admin login
 exports.login = asyncErrorHandler(async (req, res, next) => {
   const { email, password } = req.body;
-  if (
-    email !== process.env.ADMIN_EMAIL ||
-    password !== process.env.ADMIN_PASSWORD
-  ) {
-    const err = new CustomError('Invalid email or password', 401);
+  // check if email and password exist
+  if (!email || !password) {
+    const err = new CustomError('Please provide email and password', 400);
     return next(err);
   }
+  // find from db with email
+  const adminFromDb = await Admin.findOne({ email });
+  if (!adminFromDb) {
+    const err = new CustomError('Incorrect email or password', 401);
+    return next(err);
+  }
+  // check if password is correct
+  const isPasswordCorrect = await adminFromDb.comparePassword(password);
   const token = jwt.sign(
     { id: process.env.ADMIN_ID },
     process.env.TOKEN_SECRET,

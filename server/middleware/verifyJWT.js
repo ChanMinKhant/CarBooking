@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
-const CustomError = require('../utils/CustomError');
-const asyncErrorHandler = require('../utils/asyncErrorHandler');
-const Token = require('../models/tokenModel');
+const CustomError = require('../util/CustomError');
+const asyncErrorHandler = require('../util/asyncErrorHandler');
+const Token = require('../model/tokenModel');
 
 exports.verifyJWT = asyncErrorHandler(async (req, res, next) => {
   const token = req?.cookies?.jwt; // cookies.jwt // iam not sure cookie or authrization
@@ -20,18 +20,21 @@ exports.verifyJWT = asyncErrorHandler(async (req, res, next) => {
   const foundToken = await Token.findOne({ token });
   if (!foundToken) {
     res.clearCookie('jwt');
-    const err = new CustomError('Your session has expired. Please log in again.', 401);
+    const err = new CustomError(
+      'Your session has expired. Please log in again.',
+      401
+    );
     return next(err);
   }
 
   // verify token
   jwt.verify(token, process.env.TOKEN_SECRET, (err, decodedToken) => {
-    if (err || decodedToken.id !== foundToken.account_id.toString()) {
+    if (err || decodedToken.id !== foundToken.adminId.toString()) {
       const err = new CustomError('Authentication failed', 401);
       res.clearCookie('jwt');
       return next(err);
     }
-    req.account_id = decodedToken.id;
+    req.adminId = decodedToken.id;
     console.log('exe');
     next();
   });
