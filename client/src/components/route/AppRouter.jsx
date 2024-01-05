@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import BookingForm from "../form/BookingForm";
 import App from "./../../App";
 
 const AppRouter = () => {
@@ -8,6 +9,11 @@ const AppRouter = () => {
       id: 1,
       path: "/",
       component: <App />,
+    },
+    {
+      id: 2,
+      path: "/book",
+      component: <BookingForm />,
     },
   ];
 
