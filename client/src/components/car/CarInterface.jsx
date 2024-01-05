@@ -1,5 +1,5 @@
 import React from "react";
-import CarSeat from "./../assets/car-seat-icon.svg";
+import CarSeat from "./../../assets/car-seat-icon.svg";
 
 const CarInterface = ({ direction }) => {
   return (

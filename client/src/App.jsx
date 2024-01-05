@@ -1,4 +1,4 @@
-import Cars from "./components/Cars";
+import Cars from "./components/car/Cars";
 
 function App() {
   return (
