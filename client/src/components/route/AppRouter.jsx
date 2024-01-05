@@ -12,7 +12,7 @@ const AppRouter = () => {
     },
     {
       id: 2,
-      path: "/book",
+      path: "/booking/:id",
       component: <BookingForm />,
     },
   ];
