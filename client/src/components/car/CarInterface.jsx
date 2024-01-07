@@ -1,46 +1,52 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import CarSeat from './../../assets/car-seat-icon.svg';
-import { checkSeatAvailability } from './../../service/bookingService';
-import DateDropdown from './DateDropDown';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { checkSeatAvailability } from "../../service/bookingService";
+import CarSeatIcon from "../../utils/CarSeatIcon";
+import DateDropdown from "./DateDropDown";
 
 const CarInterface = ({ direction }) => {
+  const [choseDate, setChoseDate] = useState("");
+  const [seats, setSeats] = useState([1, 2, 3, 4]);
   const navigate = useNavigate();
-  const [seatAvailability, setSeatAvailability] = useState(false);
-  const [date, setDate] = useState('20-01-2004');
-  const [time, setTime] = useState('12:00');
+
   useEffect(() => {
-    async function checkSeatAvailability(date, time) {
-      try {
-        const availableSeats = await checkSeatAvailability(date, time);
-        console.log(availableSeats);
-      } catch (error) {
-        console.log(error);
+    const tempFunc = async () => {
+      if (choseDate) {
+        const mutateChoseDate = choseDate.split("/").join("-");
+        const availableSeats = await checkSeatAvailability(
+          mutateChoseDate,
+          "6:00"
+        );
+        setSeats(availableSeats);
       }
-    }
-    checkSeatAvailability(date, time);
-  }, []);
+    };
+
+    tempFunc();
+  }, [choseDate]);
+
+  const isSeatBooked = (seatNum) => seats.includes(seatNum);
+
   return (
-    <div className='flex flex-col justify-center items-center'>
-      <DateDropdown />
-      <h1 className='m-4 text-xl font-bold'>{direction}</h1>
-      <div className='border border-red-600 p-2 rounded-xl shadow-lg flex flex-col items-start justify-center gap-2'>
-        <button onClick={() => navigate('/booking/1')}>
-          <div>1</div>
-          <img className='w-16 h-16' src={CarSeat} alt='seat-1' />
+    <div className="flex flex-col justify-center items-center">
+      <DateDropdown setChoseDate={setChoseDate} />
+      <h1 className="m-4 text-xl font-bold">{direction}</h1>
+      <div className="border border-red-600 p-2 rounded-xl shadow-lg flex flex-col items-start justify-center gap-2">
+        <button>
+          <p>1</p>
+          <CarSeatIcon isAvailable={isSeatBooked(1)} />
         </button>
-        <div className='flex justify-start items-center'>
-          <button onClick={() => navigate('/booking/2')}>
-            <div>2</div>
-            <img className='w-16 h-16' src={CarSeat} alt='seat-2' />
+        <div className="flex justify-center items-center">
+          <button>
+            <p>2</p>
+            <CarSeatIcon isAvailable={isSeatBooked(2)} />
           </button>
-          <button onClick={() => navigate('/booking/3')}>
-            <div>3</div>
-            <img className='w-16 h-16' src={CarSeat} alt='seat-3' />
+          <button>
+            <p>3</p>
+            <CarSeatIcon isAvailable={isSeatBooked(3)} />
           </button>
-          <button onClick={() => navigate('/booking/4')}>
-            <div>4</div>
-            <img className='w-16 h-16' src={CarSeat} alt='seat-4' />
+          <button>
+            <p>4</p>
+            <CarSeatIcon isAvailable={isSeatBooked(4)} />
           </button>
         </div>
       </div>

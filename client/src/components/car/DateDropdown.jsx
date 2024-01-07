@@ -1,8 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from "react";
 
-const DateDropdown = () => {
+const DateDropdown = ({ setChoseDate }) => {
   const [dates, setDates] = useState([]);
-  const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+  const options = { day: "2-digit", month: "2-digit", year: "numeric" };
+
+  const handleChooseDate = (event) => {
+    setChoseDate(event.target.value);
+  };
 
   useEffect(() => {
     const today = new Date();
@@ -12,17 +16,17 @@ const DateDropdown = () => {
       const nextDay = new Date(today);
       nextDay.setDate(today.getDate() + i);
 
-      const formattedDate = nextDay.toLocaleDateString('en-GB', options);
+      const formattedDate = nextDay.toLocaleDateString("en-GB", options);
       nextDates.push(formattedDate);
     }
 
     setDates(nextDates);
-  }, [options]);
+  }, []);
 
   return (
-    <div>
+    <div className="mt-5">
       <label>Select a date:</label>
-      <select>
+      <select onChange={handleChooseDate}>
         {dates.map((date, index) => (
           <option key={index} value={date}>
             {date}
