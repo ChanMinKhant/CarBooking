@@ -31,14 +31,24 @@ exports.checkseat = asyncErrorHandler(async (req, res, next) => {
   });
 });
 
-//"http://api-url/book" or "http://api-url/book/?date=20-01-2004&time=7:00"
+//"http://api-url/book"
 exports.createBook = asyncErrorHandler(async (req, res, next) => {
-  const { name, phone, date, time, seat, travelDirection, message } = req.body;
+  const {
+    userName,
+    phoneNumber,
+    date,
+    carTime,
+    seatNumber,
+    travelDirection,
+    pickupLocation,
+    deliveryLocation,
+    message,
+  } = req.body;
   //check required fields
-  if (!name) {
+  if (!userName) {
     return next(new CustomError('Please provide your name', 400));
   }
-  if (!phone) {
+  if (!phoneNumber) {
     return next(new CustomError('Please provide your phone number', 400));
   }
 
@@ -64,10 +74,11 @@ exports.createBook = asyncErrorHandler(async (req, res, next) => {
     `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`
   );
   console.log(requestedDate);
+  console.log(today);
   if (requestedDate < today) {
     return next(new CustomError('Please provide a valid date', 400));
   }
-  if (!time) {
+  if (!carTime) {
     return next(new CustomError('Please provide your time', 400));
   }
   //if time is not in 7:00, 9:00, 11:00, 13:00, 15:00, 17:00, 19:00 , u cant book it
@@ -80,10 +91,10 @@ exports.createBook = asyncErrorHandler(async (req, res, next) => {
     '17:00',
     '19:00',
   ];
-  if (!availableTimes.includes(time)) {
+  if (!availableTimes.includes(carTime)) {
     return next(new CustomError('Please provide a valid time', 400));
   }
-  if (!seat) {
+  if (!seatNumber) {
     return next(new CustomError('Please provide your seat', 400));
   }
 

@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { checkSeatAvailability } from "../../service/bookingService";
-import CarSeatIcon from "../../utils/CarSeatIcon";
-import DateDropdown from "./DateDropDown";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { checkSeatAvailability } from '../../service/bookingService';
+import CarSeatIcon from '../../utils/CarSeatIcon';
+import DateDropdown from './DateDropDown';
 
 const CarInterface = ({ direction }) => {
-  const [choseDate, setChoseDate] = useState("");
+  const [choseDate, setChoseDate] = useState('');
   const [seats, setSeats] = useState([1, 2, 3, 4]);
   const navigate = useNavigate();
 
   useEffect(() => {
     const tempFunc = async () => {
       if (choseDate) {
-        const mutateChoseDate = choseDate.split("/").join("-");
+        const mutateChoseDate = choseDate.split('/').join('-');
         const availableSeats = await checkSeatAvailability(
           mutateChoseDate,
-          "6:00"
+          '6:00'
         );
         setSeats(availableSeats);
       }
@@ -27,15 +27,15 @@ const CarInterface = ({ direction }) => {
   const isSeatBooked = (seatNum) => seats.includes(seatNum);
 
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className='flex flex-col justify-center items-center'>
       <DateDropdown setChoseDate={setChoseDate} />
-      <h1 className="m-4 text-xl font-bold">{direction}</h1>
-      <div className="border border-red-600 p-2 rounded-xl shadow-lg flex flex-col items-start justify-center gap-2">
+      <h1 className='m-4 text-xl font-bold'>{direction}</h1>
+      <div className='border border-red-600 p-2 rounded-xl shadow-lg flex flex-col items-start justify-center gap-2'>
         <button>
           <p>1</p>
           <CarSeatIcon isAvailable={isSeatBooked(1)} />
         </button>
-        <div className="flex justify-center items-center">
+        <div className='flex justify-center items-center'>
           <button>
             <p>2</p>
             <CarSeatIcon isAvailable={isSeatBooked(2)} />

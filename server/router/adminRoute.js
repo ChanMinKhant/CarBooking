@@ -4,7 +4,6 @@ const adminController = require('./../controller/adminController');
 const { verifyJWT } = require('./../middleware/verifyJWT');
 
 //verifyJWT
-console.log('first');
 router.use(verifyJWT);
 router.get('/bookings', adminController.getBookings);
 router.put('/bookings/:id', adminController.approveBooking);
