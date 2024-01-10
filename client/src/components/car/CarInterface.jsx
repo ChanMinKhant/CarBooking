@@ -13,7 +13,7 @@ const CarInterface = ({ travelDirection }) => {
     phoneNumber: "",
     pickupLocation: "",
     deliveryLocation: "",
-    carTime: "9:00 AM",
+    carTime: "9:00",
     message: "",
   });
   const [chooseSeat, setChooseSeat] = useState(0);
