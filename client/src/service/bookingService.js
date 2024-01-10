@@ -11,3 +11,40 @@ export const checkSeatAvailability = async (date, time) => {
     throw error;
   }
 };
+
+export const createBook = async (
+  book,
+  travelDirection,
+  bookingDate,
+  chooseSeat
+) => {
+  const {
+    userName,
+    phoneNumber,
+    pickupLocation,
+    deliveryLocation,
+    carTime,
+    message,
+  } = book;
+  try {
+    const response = await apiService.post(
+      `/book/?date=${bookingDate}&time=${carTime}`,
+      {
+        userName,
+        phoneNumber,
+        pickupLocation,
+        deliveryLocation,
+        seatNumber: chooseSeat,
+        carTime,
+        message,
+        travelDirection,
+        bookingDate,
+      }
+    );
+    console.log(response.data.booking);
+    return await response.data.booking;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};

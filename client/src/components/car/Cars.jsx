@@ -3,12 +3,12 @@ import CarInterface from "./CarInterface";
 
 const Cars = () => {
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className="flex flex-col justify-center items-center m-10">
       {/* Car img */}
-      <CarInterface direction={"Pyay → Yangon"} />
-      <CarInterface direction={"Yangon → Pyay"} />
-      <CarInterface direction={"Pyay → Yangon"} />
-      <CarInterface direction={"Yangon → Pyay"} />
+      <CarInterface travelDirection={"Pyay → Yangon"} />
+      <CarInterface travelDirection={"Yangon → Pyay"} />
+      <CarInterface travelDirection={"Pyay → Yangon"} />
+      <CarInterface travelDirection={"Yangon → Pyay"} />
     </div>
   );
 };

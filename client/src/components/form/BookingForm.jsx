@@ -1,11 +1,38 @@
-const BookingForm = () => {
-  return (
-    <div className="w-[100vw] h-[100vh] flex justify-center items-center">
-      <div className="w-[80dvw] h-[80dvh] border border-gray-100 shadow-lg rounded-lg flex flex-col justify-center items-center p-5">
-        <h1 className="m-5 text-orange-500 font-bold">Your Information</h1>
+import { createBook } from "../../service/bookingService";
+
+const BookingForm = ({
+  open,
+  setOpen,
+  book,
+  setBook,
+  choseDate,
+  chooseSeat,
+  travelDirection,
+}) => {
+  if (open)
+    return (
+      <div className="absolute z-50 w-[80dvw] h-auto border border-gray-100 bg-white shadow-lg rounded-lg flex flex-col justify-center items-center p-5 m-5">
+        {/* cancel icon */}
+        <button onClick={() => setOpen(false)}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-6 h-6 hover:bg-red-100 rounded-full p-1 absolute right-2 top-2"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6 18 18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+        <h1 className="m-2 text-orange-500 font-bold">Your Information</h1>
         <div className="m-2">
           <h1>Name:</h1>
           <input
+            onChange={(evt) => setBook({ ...book, userName: evt.target.value })}
             type="text"
             className="w-[64dvw] h-[5dvh] bg-gray-200 rounded-lg p-2 focus:outline-orange-300"
           />
@@ -13,6 +40,9 @@ const BookingForm = () => {
         <div className="m-2">
           <h1>Phone number:</h1>
           <input
+            onChange={(evt) =>
+              setBook({ ...book, phoneNumber: evt.target.value })
+            }
             type="text"
             className="w-[64dvw] h-[5dvh] bg-gray-200 rounded-lg p-2 focus:outline-orange-300"
           />
@@ -20,6 +50,9 @@ const BookingForm = () => {
         <div className="m-2">
           <h1>Location to pick you up:</h1>
           <input
+            onChange={(evt) =>
+              setBook({ ...book, pickupLocation: evt.target.value })
+            }
             type="text"
             className="w-[64dvw] h-[5dvh] bg-gray-200 rounded-lg p-2 focus:outline-orange-300"
           />
@@ -27,16 +60,31 @@ const BookingForm = () => {
         <div className="m-2">
           <h1>Your destination:</h1>
           <input
+            onChange={(evt) =>
+              setBook({ ...book, deliveryLocation: evt.target.value })
+            }
             type="text"
             className="w-[64dvw] h-[5dvh] bg-gray-200 rounded-lg p-2 focus:outline-orange-300"
           />
         </div>
-        <button className="m-2 bg-orange-500 hover:bg-orange-300 text-white w-[24dvw] rounded-full p-2">
-          Submit
+        <div className="m-2">
+          <h1>Leave us message:</h1>
+          <input
+            onChange={(evt) => setBook({ ...book, message: evt.target.value })}
+            type="text"
+            className="w-[64dvw] h-[5dvh] bg-gray-200 rounded-lg p-2 focus:outline-orange-300"
+          />
+        </div>
+        <button
+          onClick={() =>
+            createBook(book, travelDirection, choseDate, chooseSeat)
+          }
+          className="m-2 bg-orange-500 hover:bg-orange-300 text-white w-[24dvw] rounded-full p-2"
+        >
+          Book
         </button>
       </div>
-    </div>
-  );
+    );
 };
 
 export default BookingForm;
