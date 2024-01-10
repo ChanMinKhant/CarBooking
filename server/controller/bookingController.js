@@ -31,7 +31,7 @@ exports.checkseat = asyncErrorHandler(async (req, res, next) => {
   });
 });
 
-//"http://api-url/book" or "http://api-url/book/?date=20-01-2004&time=7:00"
+//"http://api-url/book"
 exports.createBook = asyncErrorHandler(async (req, res, next) => {
   const {
     userName, // form state
