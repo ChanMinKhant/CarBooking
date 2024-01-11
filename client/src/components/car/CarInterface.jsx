@@ -1,23 +1,27 @@
-import React, { useEffect, useState } from "react";
-import { checkSeatAvailability } from "../../service/bookingService";
-import CarSeatIcon from "../../utils/CarSeatIcon";
-import BookingForm from "../form/BookingForm";
-import DateDropdown from "./DateDropDown";
+import React, { useEffect, useState } from 'react';
+import { checkSeatAvailability } from '../../service/bookingService';
+import CarSeatIcon from '../../utils/CarSeatIcon';
+import BookingForm from '../form/BookingForm';
+import DateDropdown from '../../utils/DateDropdown';
+import TimeDropdown from '../../utils/TimeDropdown';
+import TravelDirectionDropdown from '../../utils/TravelDirectionDropdown';
 
 const CarInterface = ({ travelDirection }) => {
-  const [choseDate, setChoseDate] = useState("");
+  const [choseDate, setChoseDate] = useState('');
+  const [chosenTime, setChosenTime] = useState('6:00');
+  const [chosenDirection, setChosenDirection] = useState('Pyay → Yangon');
   const [seats, setSeats] = useState([1, 2, 3, 4]);
   const [open, setOpen] = useState(false);
   const [book, setBook] = useState({
-    userName: "",
-    phoneNumber: "",
-    pickupLocation: "",
-    deliveryLocation: "",
-    carTime: "9:00",
-    message: "",
+    userName: '',
+    phoneNumber: '',
+    pickupLocation: '',
+    deliveryLocation: '',
+    carTime: '9:00',
+    message: '',
   });
   const [chooseSeat, setChooseSeat] = useState(0);
-  const dateParts = choseDate.split("/");
+  const dateParts = choseDate.split('/');
   const isoDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
 
   console.log(book, chooseSeat);
@@ -25,7 +29,7 @@ const CarInterface = ({ travelDirection }) => {
   useEffect(() => {
     const tempFunc = async () => {
       if (choseDate) {
-        const availableSeats = await checkSeatAvailability(isoDate, "6:00");
+        const availableSeats = await checkSeatAvailability(isoDate, '6:00');
         setSeats(availableSeats);
       }
     };
@@ -36,9 +40,11 @@ const CarInterface = ({ travelDirection }) => {
   const isSeatBooked = (seatNum) => seats.includes(seatNum);
 
   return (
-    <div className="flex flex-col justify-center items-center m-5">
+    <div className='flex flex-col justify-center items-center m-5'>
       <DateDropdown setChoseDate={setChoseDate} />
-      <h1 className="m-4 text-xl font-bold">{travelDirection}</h1>
+      <TimeDropdown setChosenTime={setChosenTime} />
+      <TravelDirectionDropdown setChosenDirection={setChosenDirection} />
+      <h1 className='m-4 text-xl font-bold'>{travelDirection}</h1>
       <BookingForm
         chooseSeat={chooseSeat}
         travelDirection={travelDirection}
@@ -48,7 +54,7 @@ const CarInterface = ({ travelDirection }) => {
         open={open}
         setOpen={setOpen}
       />
-      <div className="border border-red-600 p-2 rounded-xl shadow-lg flex flex-col items-start justify-center gap-2">
+      <div className='border border-red-600 p-2 rounded-xl shadow-lg flex flex-col items-start justify-center gap-2'>
         <button
           onClick={() => {
             setChooseSeat(1);
@@ -58,7 +64,7 @@ const CarInterface = ({ travelDirection }) => {
           <p>1</p>
           <CarSeatIcon isAvailable={isSeatBooked(1)} />
         </button>
-        <div className="flex justify-center items-center">
+        <div className='flex justify-center items-center'>
           <button
             onClick={() => {
               setChooseSeat(2);

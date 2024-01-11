@@ -1,0 +1,24 @@
+import React from 'react';
+
+const TravelDirectionDropdown = ({ setChosenDirection }) => {
+  const directions = ['Yangon → Pyay', 'Pyay → Yangon'];
+
+  const handleChooseDirection = (event) => {
+    setChosenDirection(event.target.value);
+  };
+
+  return (
+    <div className='mt-3'>
+      <label>Select a travel direction:</label>
+      <select onChange={handleChooseDirection}>
+        {directions.map((direction, index) => (
+          <option key={index} value={direction}>
+            {direction}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+};
+
+export default TravelDirectionDropdown;

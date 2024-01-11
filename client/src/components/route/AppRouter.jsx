@@ -1,13 +1,25 @@
-import React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import App from "./../../App";
+import React from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import App from './../../App';
+import AdminLoginForm from './../admin/AdminLoginForm';
+import AdminApproveForm from './../admin/AdminApproveForm';
 
 const AppRouter = () => {
   const routes = [
     {
       id: 1,
-      path: "/",
+      path: '/',
       component: <App />,
+    },
+    {
+      id: 2,
+      path: '/login',
+      component: <AdminLoginForm />,
+    },
+    {
+      id: 3,
+      path: '/admin',
+      component: <AdminApproveForm />,
     },
   ];
 
