@@ -1,4 +1,4 @@
-import apiService from "./apiService";
+import apiService from './apiService';
 
 export const checkSeatAvailability = async (date, time) => {
   try {
@@ -12,37 +12,10 @@ export const checkSeatAvailability = async (date, time) => {
   }
 };
 
-export const createBook = async (
-  book,
-  travelDirection,
-  bookingDate,
-  chooseSeat
-) => {
-  const {
-    userName,
-    phoneNumber,
-    pickupLocation,
-    deliveryLocation,
-    carTime,
-    message,
-  } = book;
+export const createBook = async (data) => {
   try {
-    const response = await apiService.post(
-      `/book/?date=${bookingDate}&time=${carTime}`,
-      {
-        userName,
-        phoneNumber,
-        pickupLocation,
-        deliveryLocation,
-        seatNumber: chooseSeat,
-        carTime,
-        message,
-        travelDirection,
-        bookingDate,
-      }
-    );
-    console.log(response.data.booking);
-    return await response.data.booking;
+    const response = await apiService.post(`/book`, data);
+    return await response.data;
   } catch (error) {
     console.log(error);
     throw error;

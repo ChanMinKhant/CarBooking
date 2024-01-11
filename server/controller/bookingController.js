@@ -72,7 +72,7 @@ exports.createBook = asyncErrorHandler(async (req, res, next) => {
   // if date is less than today , u cant book it
   // change date format
   const today = new Date();
-  const dateParts = bookingDate.split('-');
+  const dateParts = bookingDate.split('/');
   console.log('dateParts', dateParts);
   const requestedDate = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
   console.log('requestedDate: ', requestedDate);
