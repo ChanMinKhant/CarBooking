@@ -5,9 +5,10 @@ const CustomError = require('./../util/CustomError');
 //"http://api-url/checkseat/?date=20-01-2004&time=7:00"
 // i need to check the date and time is not in 7:00, 9:00, 11:00, 13:00, 15:00, 17:00, 19:00 , valid or not
 exports.checkseat = asyncErrorHandler(async (req, res, next) => {
+  console.log('req.query.date: ', req.query.date);
   const dateParts = req.query.date.split('-');
   const requestedDate = new Date(
-    `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`
+    `${dateParts[0]}-${dateParts[1]}-${dateParts[2]}`
   );
   console.log(dateParts);
   const requestedTime = req.query.time;

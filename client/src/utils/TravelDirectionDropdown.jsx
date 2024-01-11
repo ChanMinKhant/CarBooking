@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 const TravelDirectionDropdown = ({ setChosenDirection }) => {
   const directions = ['Yangon → Pyay', 'Pyay → Yangon'];
@@ -6,6 +6,10 @@ const TravelDirectionDropdown = ({ setChosenDirection }) => {
   const handleChooseDirection = (event) => {
     setChosenDirection(event.target.value);
   };
+
+  useEffect(() => {
+    setChosenDirection(directions[0]);
+  }, []);
 
   return (
     <div className='mt-3'>

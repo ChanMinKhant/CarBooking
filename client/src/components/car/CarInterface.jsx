@@ -2,14 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { checkSeatAvailability } from '../../service/bookingService';
 import CarSeatIcon from '../../utils/CarSeatIcon';
 import BookingForm from '../form/BookingForm';
-import DateDropdown from '../../utils/DateDropdown';
-import TimeDropdown from '../../utils/TimeDropdown';
-import TravelDirectionDropdown from '../../utils/TravelDirectionDropdown';
 
-const CarInterface = ({ travelDirection }) => {
-  const [choseDate, setChoseDate] = useState('');
-  const [chosenTime, setChosenTime] = useState('6:00');
-  const [chosenDirection, setChosenDirection] = useState('Pyay → Yangon');
+const CarInterface = ({ data: { choseDate, chosenDirection, chosenTime } }) => {
   const [seats, setSeats] = useState([1, 2, 3, 4]);
   const [open, setOpen] = useState(false);
   const [book, setBook] = useState({
@@ -20,10 +14,10 @@ const CarInterface = ({ travelDirection }) => {
     carTime: '9:00',
     message: '',
   });
+  console.log(choseDate, chosenDirection);
   const [chooseSeat, setChooseSeat] = useState(0);
   const dateParts = choseDate.split('/');
   const isoDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
-
   console.log(book, chooseSeat);
 
   useEffect(() => {
@@ -33,21 +27,17 @@ const CarInterface = ({ travelDirection }) => {
         setSeats(availableSeats);
       }
     };
-
     tempFunc();
-  }, [choseDate]);
+  }, [choseDate, chosenDirection, chosenTime]);
 
   const isSeatBooked = (seatNum) => seats.includes(seatNum);
 
   return (
     <div className='flex flex-col justify-center items-center m-5'>
-      <DateDropdown setChoseDate={setChoseDate} />
-      <TimeDropdown setChosenTime={setChosenTime} />
-      <TravelDirectionDropdown setChosenDirection={setChosenDirection} />
-      <h1 className='m-4 text-xl font-bold'>{travelDirection}</h1>
+      <h1 className='m-4 text-xl font-bold'>{chosenDirection}</h1>
       <BookingForm
         chooseSeat={chooseSeat}
-        travelDirection={travelDirection}
+        travelDirection={chosenDirection}
         choseDate={isoDate}
         book={book}
         setBook={setBook}
