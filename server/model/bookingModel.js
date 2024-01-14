@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const bookingSchema = new mongoose.Schema({
   userName: {
@@ -24,12 +24,12 @@ const bookingSchema = new mongoose.Schema({
   },
   travelDirection: {
     type: String,
-    enum: ["Yangon → Pyay", "Pyay → Yangon"],
+    enum: ['Yangon → Pyay', 'Pyay → Yangon'],
     required: true,
   },
   carTime: {
     type: String,
-    enum: ["6:00 AM", "7:00 AM", "8:00 AM", "9:00 AM", "10:00 AM"],
+    enum: ['6:05', '6:10', '6:15', '6:20'],
     required: true,
   },
   bookingDate: {
@@ -42,6 +42,6 @@ const bookingSchema = new mongoose.Schema({
   },
 });
 
-const Booking = mongoose.model("Booking", bookingSchema);
+const Booking = mongoose.model('Booking', bookingSchema);
 
 module.exports = Booking;

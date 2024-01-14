@@ -5,22 +5,27 @@ const CustomError = require('./../util/CustomError');
 //"http://api-url/checkseat/?date=20-01-2004&time=7:00"
 // i need to check the date and time is not in 7:00, 9:00, 11:00, 13:00, 15:00, 17:00, 19:00 , valid or not
 exports.checkseat = asyncErrorHandler(async (req, res, next) => {
-  console.log('req.query.date: ', req.query.date);
-  const dateParts = req.query.date.split('-');
+  const { date, time } = req.query;
+
+  if (!date) {
+    return next(new CustomError('Please provide a valid date', 400));
+  }
+  const dateParts = date.split('-');
+  console.log(dateParts);
   const requestedDate = new Date(
     `${dateParts[0]}-${dateParts[1]}-${dateParts[2]}`
   );
-  console.log(dateParts);
-  const requestedTime = req.query.time;
-  console.log(requestedDate);
-  if (!requestedDate || !requestedTime) {
-    return next(new CustomError('Please provide a valid date and time', 400));
+
+  // console.log(dateParts);
+  // console.log(requestedDate);
+
+  let query = { bookingDate: requestedDate };
+
+  if (time) {
+    query.carTime = time;
   }
 
-  const existingBookings = await Booking.find({
-    bookingDate: requestedDate,
-    carTime: requestedTime,
-  });
+  const existingBookings = await Booking.find(query);
 
   const availableSeats = [1, 2, 3, 4].filter((seat) => {
     return !existingBookings.some((booking) => booking.seatNumber === seat);
@@ -72,14 +77,20 @@ exports.createBook = asyncErrorHandler(async (req, res, next) => {
   // if date is less than today , u cant book it
   // change date format
   const today = new Date();
+  const formattedToday = today.toISOString().split('T')[0] + 'T00:00:00.000Z'; // backup plan
+  console.log('today: ', today.toLocaleDateString());
   const dateParts = bookingDate.split('/');
   console.log('dateParts', dateParts);
-  const requestedDate = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
+  const requestedDate = new Date(
+    `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`
+  );
   console.log('requestedDate: ', requestedDate);
-  if (!requestedDate.getTime())
+  console.log('today: ', today);
+  if (!requestedDate.getTime()) {
     return next(new CustomError('Please provide a valid date.', 400));
-
-  if (requestedDate < today) {
+  }
+  if (requestedDate < formattedToday) {
+    //setHours(0, 0, 0, 0) is to set time to 00:00:00:00
     return next(new CustomError('Please provide a valid date', 400));
   }
   if (!carTime) {

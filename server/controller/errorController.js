@@ -1,7 +1,7 @@
 const CustomError = require('../util/CustomError');
 
 const devError = (err, res) => {
-  res.status(err.statusCode).json({
+  return res.status(err.statusCode).json({
     status: err.status,
     message: err.message,
     stack: err.stack,
@@ -11,13 +11,13 @@ const devError = (err, res) => {
 
 const prodError = (err, res) => {
   if (err.isOperational) {
-    res.status(err.statusCode).json({
+    return res.status(err.statusCode).json({
       status: err.status,
       message: err.message,
     });
   } else {
     console.error('ERROR 💥');
-    res.status(500).json({
+    return res.status(500).json({
       status: 'error',
       message: 'Something went wrong',
     });
@@ -48,19 +48,18 @@ const handleJWTExpiredError = () =>
   new CustomError('Something went! Please log in again.', 401);
 
 module.exports = (err, req, res, next) => {
-  const environment = process.env.NODE_ENV || 'development';
+  const environment = process.env.NODE_ENV.trim() || 'development';
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
-
   if (environment === 'development') {
     devError(err, res);
   } else if (environment === 'production') {
-    let error;
     if (err.name === 'CastError') err = handleCastErrorDB(err);
     if (err.code === 11000) err = handleDuplicateFieldsDB(err);
     if (err.name === 'ValidationError') err = handleValidationErrorDB(err);
     if (err.name === 'JsonWebTokenError') err = handleJWTError();
     if (err.name === 'TokenExpiredError') err = handleJWTExpiredError();
     prodError(err, res);
+  } else {
   }
 };
