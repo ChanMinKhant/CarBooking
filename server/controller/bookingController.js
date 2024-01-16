@@ -2,38 +2,42 @@ const asyncErrorHandler = require('./../util/asyncErrorHandler');
 const Booking = require('./../model/bookingModel');
 const CustomError = require('./../util/CustomError');
 
-//"http://api-url/checkseat/?date=20-01-2004&time=7:00"
+//"http://api-url/checkseat/?date=20-01-2004&time=7:00?from=yangon" or "from=pyay"
 // i need to check the date and time is not in 7:00, 9:00, 11:00, 13:00, 15:00, 17:00, 19:00 , valid or not
+// i need to add pending status to booking
 exports.checkseat = asyncErrorHandler(async (req, res, next) => {
-  const { date, time } = req.query;
+  const { date, time, from } = req.query;
 
-  if (!date) {
-    return next(new CustomError('Please provide a valid date', 400));
+  if (!date || !time || !from) {
+    return next(new CustomError('Please provide date, time, and from', 400));
   }
-  const dateParts = date.split('-');
-  console.log(dateParts);
-  const requestedDate = new Date(
-    `${dateParts[0]}-${dateParts[1]}-${dateParts[2]}`
+  console.log(date);
+
+  let query = { bookingDate: date, carTime: time };
+  if (from === 'yangon') {
+    query = { ...query, travelDirection: 'Yangon → Pyay' };
+  } else if (from === 'pyay') {
+    query = { ...query, travelDirection: 'Pyay → Yangon' };
+  } else {
+    return next(new CustomError('Please provide a valid from', 400));
+  }
+
+  const Bookings = await Booking.find(query);
+
+  const pendingSeats = Bookings.filter((booking) => !booking.isApproved).map(
+    (booking) => booking.seatNumber
   );
 
-  // console.log(dateParts);
-  // console.log(requestedDate);
-
-  let query = { bookingDate: requestedDate };
-
-  if (time) {
-    query.carTime = time;
-  }
-
-  const existingBookings = await Booking.find(query);
-
   const availableSeats = [1, 2, 3, 4].filter((seat) => {
-    return !existingBookings.some((booking) => booking.seatNumber === seat);
+    return !Bookings.some(
+      (booking) => booking.seatNumber === seat && booking.isApproved
+    );
   });
 
   res.status(200).json({
     success: true,
     availableSeats,
+    pendingSeats,
   });
 });
 
@@ -105,8 +109,7 @@ exports.createBook = asyncErrorHandler(async (req, res, next) => {
     return next(new CustomError('Please provide your seat', 400));
   }
 
-  //save to database
-  const booking = await Booking.create({
+  const data = {
     userName,
     phoneNumber,
     pickupLocation,
@@ -116,7 +119,10 @@ exports.createBook = asyncErrorHandler(async (req, res, next) => {
     carTime,
     bookingDate,
     message,
-  });
+  };
+  console.log(data);
+  //save to database
+  const booking = await Booking.create(data);
   //sentEmail to admin to approve
 
   res.status(201).json({

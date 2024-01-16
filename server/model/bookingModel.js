@@ -29,11 +29,11 @@ const bookingSchema = new mongoose.Schema({
   },
   carTime: {
     type: String,
-    enum: ['6:05', '6:10', '6:15', '6:20'],
+    enum: ['6:00', '6:15', '6:10', '6:15'],
     required: true,
   },
   bookingDate: {
-    type: Date,
+    type: String,
     required: true,
   },
   isApproved: {

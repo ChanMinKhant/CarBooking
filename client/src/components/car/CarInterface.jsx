@@ -22,7 +22,12 @@ const CarInterface = ({ data: { chosenDirection, choseDate, chosenTime } }) => {
   useEffect(() => {
     const tempFunc = async () => {
       if (choseDate) {
-        const availableSeats = await checkSeatAvailability(isoDate, '6:00');
+        const availableSeats = await checkSeatAvailability(
+          choseDate,
+          chosenTime,
+          chosenDirection
+        );
+        console.log(availableSeats);
         setSeats(availableSeats);
       }
     };
