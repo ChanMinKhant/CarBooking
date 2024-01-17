@@ -10,7 +10,7 @@ export const checkSeatAvailability = async (date, time, from) => {
     const response = await apiService.get(
       `/checkseat/?date=${date}&time=${time}&from=${from}`
     );
-    return response.data.availableSeats;
+    return response.data;
   } catch (error) {
     console.log(error);
     throw error;
