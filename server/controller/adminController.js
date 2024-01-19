@@ -53,10 +53,10 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
     }
   );
   // save token in db
-  await Token.create({ token, adminId: process.env.ADMIN_ID });
+  await Token.create({ token, adminId: adminFromDb.id });
   res.cookie('jwt', token, {
     expires: new Date(
-      Date.now() + process.env.COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+      Date.now() + (process.env.COOKIE_EXPIRES_IN || 20) * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
   });

@@ -17,7 +17,7 @@ const AdminLoginForm = () => {
       console.log('Email:', emailValue);
       console.log('Password:', passwordValue);
     } catch (error) {
-      console.error(error);
+      console.error(error.response.data);
     }
   };
 
