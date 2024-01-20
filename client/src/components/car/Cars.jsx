@@ -15,7 +15,6 @@ const Cars = () => {
     chosenTime,
     chosenDirection,
   };
-  console.log(data);
   return (
     <div className='flex flex-col justify-center items-center m-10'>
       {/* Car img */}

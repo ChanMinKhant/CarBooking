@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { checkSeatAvailability } from '../../service/bookingService';
 import CarSeatIcon from '../../utils/CarSeatIcon';
-import BookingForm from '../form/BookingForm';
+import BookingForm from './BookingForm';
 import { createBook } from '../../service/bookingService';
 
 const CarInterface = ({ data: { chosenDirection, choseDate, chosenTime } }) => {
@@ -46,20 +46,20 @@ const CarInterface = ({ data: { chosenDirection, choseDate, chosenTime } }) => {
 
   const isSeatPending = (seatNum) => pendingSeats.includes(seatNum);
 
-  const addDataToBook = (data) => {
-    setBook({ ...book, ...data });
-  };
+  // const addDataToBook = (data) => {
+  //   setBook({ ...book, ...data });
+  // };
 
-  const postToServer = async () => {
-    try {
-      console.log('booking');
-      const res = await createBook(book);
-      console.log('booked', res);
-    } catch (error) {
-      console.log('err');
-      console.log(error.response.data);
-    }
-  };
+  // const postToServer = async () => {
+  //   try {
+  //     console.log('booking');
+  //     const res = await createBook(book);
+  //     console.log('booked', res);
+  //   } catch (error) {
+  //     console.log('err');
+  //     console.log(error.response.data);
+  //   }
+  // };
 
   const handleSeat = (seatNum) => {
     setBook({ ...book, seatNumber: seatNum });
@@ -69,12 +69,7 @@ const CarInterface = ({ data: { chosenDirection, choseDate, chosenTime } }) => {
   return (
     <div className='flex flex-col justify-center items-center m-5'>
       <h1 className='m-4 text-xl font-bold'>{chosenDirection}</h1>
-      <BookingForm
-        addDataToBook={addDataToBook}
-        postToServer={postToServer}
-        open={open}
-        setOpen={setOpen}
-      />
+      <BookingForm book={book} open={open} setOpen={setOpen} />
       <div className='border border-red-600 p-2 rounded-xl shadow-lg flex flex-col items-start justify-center gap-2'>
         <button
           onClick={() => {

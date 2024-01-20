@@ -1,22 +1,47 @@
-const BookingForm = ({ addDataToBook, postToServer, open, setOpen }) => {
+import React, { useState } from 'react';
+import { createBook } from '../../service/bookingService';
+import { useEffect } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+const BookingForm = ({ open, setOpen, book }) => {
+  const [books, setBooks] = useState(book);
+  const [formDate, setFormDate] = useState({});
+  useEffect(() => {
+    setBooks(book);
+  }, [book]);
   const handleName = (evt) => {
-    addDataToBook({ userName: evt.target.value });
+    setFormDate({ ...formDate, userName: evt.target.value });
   };
 
   const handlePhoneNumber = (evt) => {
-    addDataToBook({ phoneNumber: evt.target.value });
+    setFormDate({ ...formDate, phoneNumber: evt.target.value });
   };
 
   const handlePickupLocation = (evt) => {
-    addDataToBook({ pickupLocation: evt.target.value });
+    setFormDate({ ...formDate, pickupLocation: evt.target.value });
   };
 
   const handleDeliveryLocation = (evt) => {
-    addDataToBook({ deliveryLocation: evt.target.value });
+    setFormDate({ ...formDate, deliveryLocation: evt.target.value });
   };
 
   const handleMessage = (evt) => {
-    addDataToBook({ message: evt.target.value });
+    setFormDate({ ...formDate, message: evt.target.value });
+  };
+
+  const postToServer = async () => {
+    try {
+      console.log('booking');
+      // console.log(books);
+      const res = await createBook({ ...books, ...formDate });
+      console.log('booked', res);
+      toast.success('Booked successfully!');
+    } catch (error) {
+      console.log('err');
+      console.log(error.response?.data);
+      toast.error(error.response?.data?.message);
+    }
   };
 
   if (open)
@@ -46,6 +71,7 @@ const BookingForm = ({ addDataToBook, postToServer, open, setOpen }) => {
           <h1>Name:</h1>
           <input
             onChange={handleName}
+            value={formDate.userName}
             type='text'
             className='w-[64vw] h-[5vh] bg-gray-200 rounded-lg p-2 focus:outline-orange-300'
           />
@@ -54,6 +80,7 @@ const BookingForm = ({ addDataToBook, postToServer, open, setOpen }) => {
           <h1>Phone number:</h1>
           <input
             onChange={handlePhoneNumber}
+            value={formDate.phoneNumber}
             type='text'
             className='w-[64vw] h-[5vh] bg-gray-200 rounded-lg p-2 focus:outline-orange-300'
           />
@@ -62,6 +89,7 @@ const BookingForm = ({ addDataToBook, postToServer, open, setOpen }) => {
           <h1>Location to pick you up:</h1>
           <input
             onChange={handlePickupLocation}
+            value={formDate.pickupLocation}
             type='text'
             className='w-[64vw] h-[5vh] bg-gray-200 rounded-lg p-2 focus:outline-orange-300'
           />
@@ -70,6 +98,7 @@ const BookingForm = ({ addDataToBook, postToServer, open, setOpen }) => {
           <h1>Your destination:</h1>
           <input
             onChange={handleDeliveryLocation}
+            value={formDate.deliveryLocation}
             type='text'
             className='w-[64vw] h-[5vh] bg-gray-200 rounded-lg p-2 focus:outline-orange-300'
           />
@@ -78,6 +107,7 @@ const BookingForm = ({ addDataToBook, postToServer, open, setOpen }) => {
           <h1>Leave us a message:</h1>
           <input
             onChange={handleMessage}
+            value={formDate.message}
             type='text'
             className='w-[64vw] h-[5vh] bg-gray-200 rounded-lg p-2 focus:outline-orange-300'
           />
@@ -88,6 +118,7 @@ const BookingForm = ({ addDataToBook, postToServer, open, setOpen }) => {
         >
           Book
         </button>
+        <ToastContainer position='top-center' />
       </div>
     );
 };

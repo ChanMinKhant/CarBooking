@@ -13,7 +13,6 @@ const DateDropdown = ({ setChoseDate }) => {
     for (let i = 0; i < 15; i++) {
       const nextDay = new Date(today);
       nextDay.setDate(today.getDate() + i);
-
       const formattedDate = nextDay.toLocaleDateString('en-GB', options);
       nextDates.push(formattedDate);
     }
