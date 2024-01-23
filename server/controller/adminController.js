@@ -1,9 +1,9 @@
-const asyncErrorHandler = require('./../util/asyncErrorHandler');
-const Booking = require('./../model/bookingModel');
-const CustomError = require('./../util/CustomError');
-const Admin = require('./../model/adminModel');
-const Token = require('./../model/tokenModel');
-const jwt = require('jsonwebtoken');
+const asyncErrorHandler = require("./../util/asyncErrorHandler");
+const Booking = require("./../model/bookingModel");
+const CustomError = require("./../util/CustomError");
+const Admin = require("./../model/adminModel");
+const Token = require("./../model/tokenModel");
+const jwt = require("jsonwebtoken");
 
 // create admin account
 // "http://api-url/createAdmin"
@@ -11,8 +11,8 @@ exports.createAdmin = asyncErrorHandler(async (req, res, next) => {
   // to create admin account , admin must be logged in and have superAdmin role find from fb as req.adminId
   const adminId = req.account_id;
   const admin = await Admin.findById(adminId);
-  if (admin.role !== 'superAdmin') {
-    const err = new CustomError('You are not allowed to create admin', 401);
+  if (admin.role !== "superAdmin") {
+    const err = new CustomError("You are not allowed to create admin", 401);
     return next(err);
   }
   const { username, password, email, role } = req.body;
@@ -20,7 +20,7 @@ exports.createAdmin = asyncErrorHandler(async (req, res, next) => {
     username,
     password,
     email,
-    role: role || 'admin',
+    role: role || "admin",
   });
   res.status(201).json({
     success: true,
@@ -34,17 +34,21 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
   const { email, password } = req.body;
   // check if email and password exist
   if (!email || !password) {
-    const err = new CustomError('Please provide email and password', 400);
+    const err = new CustomError("Please provide email and password", 400);
     return next(err);
   }
   // find from db with email
   const adminFromDb = await Admin.findOne({ email });
   if (!adminFromDb) {
-    const err = new CustomError('Incorrect email or password', 401);
+    const err = new CustomError("Incorrect email or password", 401);
     return next(err);
   }
   // check if password is correct
   const isPasswordCorrect = await adminFromDb.comparePassword(password);
+
+  if (!isPasswordCorrect)
+    return next(new CustomError("Incorrect password. Please try again.", 400));
+
   const token = jwt.sign(
     { id: process.env.ADMIN_ID },
     process.env.TOKEN_SECRET,
@@ -54,7 +58,7 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
   );
   // save token in db
   await Token.create({ token, adminId: adminFromDb.id });
-  res.cookie('jwt', token, {
+  res.cookie("jwt", token, {
     expires: new Date(
       Date.now() + (process.env.COOKIE_EXPIRES_IN || 20) * 24 * 60 * 60 * 1000
     ),
@@ -70,7 +74,7 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
 exports.logout = asyncErrorHandler(async (req, res, next) => {
   const token = req.cookies.jwt;
   await Token.findOneAndDelete({ token });
-  res.clearCookie('jwt');
+  res.clearCookie("jwt");
   res.status(200).json({
     success: true,
   });
@@ -80,7 +84,7 @@ exports.logout = asyncErrorHandler(async (req, res, next) => {
 exports.logoutAll = asyncErrorHandler(async (req, res, next) => {
   const adminId = req.account_id;
   await Token.deleteMany({ adminId });
-  res.clearCookie('jwt');
+  res.clearCookie("jwt");
   res.status(200).json({
     success: true,
   });
@@ -115,7 +119,7 @@ exports.approveBooking = asyncErrorHandler(async (req, res, next) => {
     { new: true }
   );
   if (!updatedBooking) {
-    throw new CustomError('Booking not found', 404);
+    throw new CustomError("Booking not found", 404);
   }
   res.status(200).json({ success: true, updatedBooking });
 });
