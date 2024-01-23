@@ -123,3 +123,69 @@ exports.createBook = asyncErrorHandler(async (req, res, next) => {
     booking,
   });
 });
+
+// "http://api-url"
+exports.getBookings = asyncErrorHandler(async (req, res, next) => {
+  const requestedDate = new Date(req.query.date);
+  const requestedTime = req.query.time;
+  let query = {
+    bookingDate: requestedDate,
+  };
+  if (requestedTime) {
+    query.carTime = requestedTime;
+  }
+  const existingBookings = await Booking.find(query);
+  res.status(200).json({
+    success: true,
+    existingBookings,
+  });
+});
+
+// "http://api-url/:id"
+exports.getPendingSeats = asyncErrorHandler(async (req, res, next) => {
+  const pendingBookings = await Booking.find({ isApproved: false });
+  if (!pendingBookings) {
+    throw new CustomError('Booking not found', 404);
+  }
+  res.status(200).json({
+    success: true,
+    pendingBookings,
+  });
+});
+
+// "http://api-url/:id"
+exports.getApprovedSeats = asyncErrorHandler(async (req, res, next) => {
+  const approvedBookings = await Booking.find({ isApproved: true });
+  if (!approvedBookings) {
+    throw new CustomError('Booking not found', 404);
+  }
+  res.status(200).json({
+    success: true,
+    approvedBookings,
+  });
+});
+
+// "http://api-url/:id"
+exports.approveBooking = asyncErrorHandler(async (req, res, next) => {
+  const { id } = req.params;
+  //search booking by id and update isApproved field to true and return updated booking
+  const updatedBooking = await Booking.findByIdAndUpdate(
+    id,
+    { isApproved: true },
+    { new: true }
+  );
+  if (!updatedBooking) {
+    throw new CustomError('Booking not found', 404);
+  }
+  res
+    .status(200)
+    .json({ success: true, message: 'Booking approved', updatedBooking });
+});
+
+// "http://api-url/:id"
+exports.cancleBooking = asyncErrorHandler(async (req, res, next) => {
+  const { id } = req.params;
+  // search booking by id and delete booking
+  await Booking.findByIdAndDelete(id);
+  res.status(200).json({ success: true, message: 'Booking cancle' });
+});
