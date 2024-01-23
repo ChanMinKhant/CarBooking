@@ -11,7 +11,6 @@ exports.checkseat = asyncErrorHandler(async (req, res, next) => {
   if (!date || !time || !from) {
     return next(new CustomError('Please provide date, time, and from', 400));
   }
-  console.log(date);
 
   let query = { bookingDate: date, carTime: time };
   if (from === 'yangon') {
@@ -55,7 +54,6 @@ exports.createBook = asyncErrorHandler(async (req, res, next) => {
     message, // form state
   } = req.body;
   //check required fields
-  console.log('bookingDate: ', bookingDate);
 
   if (!userName) {
     return next(new CustomError('Please provide your name', 400));
@@ -82,14 +80,10 @@ exports.createBook = asyncErrorHandler(async (req, res, next) => {
   // change date format
   const today = new Date();
   const formattedToday = today.toISOString().split('T')[0] + 'T00:00:00.000Z'; // backup plan
-  console.log('today: ', today.toLocaleDateString());
   const dateParts = bookingDate.split('/');
-  console.log('dateParts', dateParts);
   const requestedDate = new Date(
     `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`
   );
-  console.log('requestedDate: ', requestedDate);
-  console.log('today: ', today);
   if (!requestedDate.getTime()) {
     return next(new CustomError('Please provide a valid date.', 400));
   }
@@ -120,7 +114,6 @@ exports.createBook = asyncErrorHandler(async (req, res, next) => {
     bookingDate,
     message,
   };
-  console.log(data);
   //save to database
   const booking = await Booking.create(data);
   //sentEmail to admin to approve

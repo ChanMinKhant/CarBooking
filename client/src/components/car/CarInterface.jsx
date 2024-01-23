@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { checkSeatAvailability } from '../../service/bookingService';
 import CarSeatIcon from '../../utils/CarSeatIcon';
-import BookingForm from '../form/BookingForm';
+import BookingForm from './BookingForm';
 import { createBook } from '../../service/bookingService';
 
-const CarInterface = ({ data: { chosenDirection, choseDate, chosenTime } }) => {
+const CarInterface = ({
+  data: { chosenDirection, choseDate, chosenTime },
+  isAdmin,
+}) => {
   const [availableSeats, setAvailableSeats] = useState([1, 2, 3, 4]);
   const [pendingSeats, setPendingSeats] = useState([]); // [1, 2, 3, 4
   const [open, setOpen] = useState(false);
@@ -16,7 +19,7 @@ const CarInterface = ({ data: { chosenDirection, choseDate, chosenTime } }) => {
     seatNumber: 0,
     message: '',
   });
-  console.log(chosenDirection);
+  console.log(isAdmin);
   const dateParts = choseDate.split('/');
   const isoDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
 
@@ -33,7 +36,6 @@ const CarInterface = ({ data: { chosenDirection, choseDate, chosenTime } }) => {
       }
     };
     tempFunc();
-    console.log(choseDate);
     setBook({
       ...book,
       travelDirection: chosenDirection,

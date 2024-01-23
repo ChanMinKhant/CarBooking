@@ -28,6 +28,21 @@ exports.createAdmin = asyncErrorHandler(async (req, res, next) => {
   });
 });
 
+// check is admin?
+// "http://api-url/isAdmin"
+exports.isAdmin = asyncErrorHandler(async (req, res, next) => {
+  const adminId = req.adminId;
+  const admin = await Admin.findById(adminId);
+  if (!admin) {
+    const err = new CustomError('You are not admin', 401);
+    return next(err);
+  }
+  res.status(200).json({
+    success: true,
+    isAdmin: true,
+  });
+});
+
 // "http://api-url/login"
 // send email to admin if another admin login
 exports.login = asyncErrorHandler(async (req, res, next) => {
@@ -45,13 +60,13 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
   }
   // check if password is correct
   const isPasswordCorrect = await adminFromDb.comparePassword(password);
-  const token = jwt.sign(
-    { id: process.env.ADMIN_ID },
-    process.env.TOKEN_SECRET,
-    {
-      expiresIn: process.env.TOKEN_EXPIRES_IN,
-    }
-  );
+  if (!isPasswordCorrect) {
+    const err = new CustomError('Incorrect email or password', 401);
+    return next(err);
+  }
+  const token = jwt.sign({ id: adminFromDb.id }, process.env.TOKEN_SECRET, {
+    expiresIn: process.env.TOKEN_EXPIRES_IN,
+  });
   // save token in db
   await Token.create({ token, adminId: adminFromDb.id });
   res.cookie('jwt', token, {

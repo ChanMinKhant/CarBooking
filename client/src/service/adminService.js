@@ -9,3 +9,13 @@ export const login = async (email, password) => {
     throw error;
   }
 };
+
+export const checkAdmin = async () => {
+  try {
+    const response = await apiService.get(`/admin/isAdmin`);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
