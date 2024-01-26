@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { checkSeatAvailability } from '../../service/bookingService';
-import CarSeatIcon from '../../utils/CarSeatIcon';
-import BookingForm from './BookingForm';
-import { createBook } from '../../service/bookingService';
+import React, { useEffect, useState } from "react";
+import {
+  checkSeatAvailability,
+  createBook,
+} from "../../service/bookingService";
+import CarSeatIcon from "../../utils/CarSeatIcon";
+import BookingForm from "./BookingForm";
 
 const CarInterface = ({
   data: { chosenDirection, choseDate, chosenTime },
@@ -12,15 +14,15 @@ const CarInterface = ({
   const [pendingSeats, setPendingSeats] = useState([]); // [1, 2, 3, 4
   const [open, setOpen] = useState(false);
   const [book, setBook] = useState({
-    userName: '',
-    phoneNumber: '',
-    pickupLocation: '',
-    deliveryLocation: '',
+    userName: "",
+    phoneNumber: "",
+    pickupLocation: "",
+    deliveryLocation: "",
     seatNumber: 0,
-    message: '',
+    message: "",
   });
   console.log(isAdmin);
-  const dateParts = choseDate.split('/');
+  const dateParts = choseDate.split("/");
   const isoDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
 
   useEffect(() => {
@@ -54,11 +56,11 @@ const CarInterface = ({
 
   const postToServer = async () => {
     try {
-      console.log('booking');
+      console.log("booking");
       const res = await createBook(book);
-      console.log('booked', res);
+      console.log("booked", res);
     } catch (error) {
-      console.log('err');
+      console.log("err");
       console.log(error.response.data);
     }
   };
@@ -69,15 +71,15 @@ const CarInterface = ({
   };
 
   return (
-    <div className='flex flex-col justify-center items-center m-5'>
-      <h1 className='m-4 text-xl font-bold'>{chosenDirection}</h1>
+    <div className="flex flex-col justify-center items-center m-5">
+      <h1 className="m-4 text-xl font-bold">{chosenDirection}</h1>
       <BookingForm
         addDataToBook={addDataToBook}
         postToServer={postToServer}
         open={open}
         setOpen={setOpen}
       />
-      <div className='border border-red-600 p-2 rounded-xl shadow-lg flex flex-col items-start justify-center gap-2'>
+      <div className="border border-red-600 p-2 rounded-xl shadow-lg flex flex-col items-start justify-center gap-2">
         <button
           onClick={() => {
             handleSeat(1);
@@ -89,7 +91,7 @@ const CarInterface = ({
             isPending={isSeatPending(1)}
           />
         </button>
-        <div className='flex justify-center items-center'>
+        <div className="flex justify-center items-center">
           <button
             onClick={() => {
               handleSeat(2);
