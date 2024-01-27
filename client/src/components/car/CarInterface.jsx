@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   checkSeatAvailability,
   createBook,
+  getApprovedSeats,
 } from "../../service/bookingService";
 import CarSeatIcon from "../../utils/CarSeatIcon";
 import BookingForm from "./BookingForm";
@@ -24,6 +25,7 @@ const CarInterface = ({
   console.log(isAdmin);
   const dateParts = choseDate.split("/");
   const isoDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+  const [isApproved, setIsApproved] = useState(false);
 
   useEffect(() => {
     const tempFunc = async () => {
@@ -50,6 +52,21 @@ const CarInterface = ({
 
   const isSeatPending = (seatNum) => pendingSeats.includes(seatNum);
 
+  const [approvedBookings, setApprovedBookings] = useState([]);
+
+  console.log("approvedSeats: ", approvedBookings);
+
+  useEffect(() => {
+    getApprovedSeats().then((data) => setApprovedBookings(data));
+  }, []);
+
+  const isSeatApproved = (seatNum) => {
+    const approvedSeats = approvedBookings.map((item) => item.seatNumber);
+    console.log("approved seats: ", approvedSeats);
+    return approvedSeats.includes(seatNum);
+  };
+  console.log("isSeatApproved: ", isSeatApproved(4));
+
   const addDataToBook = (data) => {
     setBook({ ...book, ...data });
   };
@@ -59,6 +76,7 @@ const CarInterface = ({
       console.log("booking");
       const res = await createBook(book);
       console.log("booked", res);
+      setOpen(false);
     } catch (error) {
       console.log("err");
       console.log(error.response.data);
@@ -78,6 +96,9 @@ const CarInterface = ({
         postToServer={postToServer}
         open={open}
         setOpen={setOpen}
+        isAdmin={isAdmin}
+        seatNum={book.seatNumber}
+        book={book}
       />
       <div className="border border-red-600 p-2 rounded-xl shadow-lg flex flex-col items-start justify-center gap-2">
         <button
@@ -87,6 +108,7 @@ const CarInterface = ({
         >
           <p>1</p>
           <CarSeatIcon
+            isApproved={isSeatApproved(1)}
             isAvailable={isSeatBooked(1)}
             isPending={isSeatPending(1)}
           />
@@ -99,6 +121,7 @@ const CarInterface = ({
           >
             <p>2</p>
             <CarSeatIcon
+              isApproved={isSeatApproved(2)}
               isAvailable={isSeatBooked(2)}
               isPending={isSeatPending(2)}
             />
@@ -110,6 +133,7 @@ const CarInterface = ({
           >
             <p>3</p>
             <CarSeatIcon
+              isApproved={isSeatApproved(3)}
               isAvailable={isSeatBooked(3)}
               isPending={isSeatPending(3)}
             />
@@ -121,6 +145,7 @@ const CarInterface = ({
           >
             <p>4</p>
             <CarSeatIcon
+              isApproved={isSeatApproved(4)}
               isAvailable={isSeatBooked(4)}
               isPending={isSeatPending(4)}
             />

@@ -1,11 +1,11 @@
-import apiService from './apiService';
+import apiService from "./apiService";
 
 export const checkSeatAvailability = async (date, time, from) => {
   try {
-    if (from === 'Yangon → Pyay') {
-      from = 'yangon';
-    } else if (from === 'Pyay → Yangon') {
-      from = 'pyay';
+    if (from === "Yangon → Pyay") {
+      from = "yangon";
+    } else if (from === "Pyay → Yangon") {
+      from = "pyay";
     }
     const response = await apiService.get(
       `/checkseat/?date=${date}&time=${time}&from=${from}`
@@ -27,8 +27,8 @@ export const createBook = async (data) => {
 
 export const getPendingSeats = async () => {
   try {
-    const response = await apiService.get('/pendingseats');
-    return response.data;
+    const response = await apiService.get("/pendingseats");
+    return response.data.pendingBookings;
   } catch (error) {
     throw error;
   }
@@ -36,8 +36,8 @@ export const getPendingSeats = async () => {
 
 export const getApprovedSeats = async () => {
   try {
-    const response = await apiService.get('/approvedseats');
-    return response.data;
+    const response = await apiService.get("/approvedseats");
+    return response.data.approvedBookings;
   } catch (error) {
     throw error;
   }
