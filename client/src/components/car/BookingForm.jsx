@@ -7,16 +7,13 @@ const BookingForm = ({
   open,
   setOpen,
   isAdmin,
-  seatNum,
   book,
 }) => {
+  console.log('BookingForm rendered');
   const [pendingSeats, setPendingSeats] = useState([]);
   const relevantBookingData = pendingSeats.find(
-    (item) => item.seatNumber === seatNum
+    (item) => item.seatNumber === book.seatNumber
   );
-  console.log('relevant booking data: ', relevantBookingData);
-
-  console.log('state pending seats: ', pendingSeats);
 
   const handleName = (evt) => {
     addDataToBook({ userName: evt.target.value });
@@ -40,19 +37,15 @@ const BookingForm = ({
 
   const handleApproveBooking = () => {
     const relevantBooking = pendingSeats.find(
-      (item) => item.seatNumber === seatNum
+      (item) => item.seatNumber === book.seatNumber
     );
-    console.log('relevant booking: ', relevantBooking);
     if (!relevantBooking) return alert('No booking pending on that seat!'); // we can improve this later for ux
-    const res = approveBooking(relevantBooking._id)
-      .then((data) => console.log('data: ', data))
-      .then(() => setOpen(false));
+    const res = approveBooking(relevantBooking._id).then(() => setOpen(false));
   };
 
   useEffect(() => {
     const tempFunc = async () => {
       const res = await getPendingSeats();
-      console.log('pending seats: ', res);
       setPendingSeats(res);
     };
     if (isAdmin) tempFunc();

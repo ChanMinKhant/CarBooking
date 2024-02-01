@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 const DateDropdown = ({ setChoseDate }) => {
+  console.log('DateDropdown rendered');
   const [dates, setDates] = useState([]);
   const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
 
@@ -36,4 +37,4 @@ const DateDropdown = ({ setChoseDate }) => {
   );
 };
 
-export default DateDropdown;
+export default React.memo(DateDropdown);

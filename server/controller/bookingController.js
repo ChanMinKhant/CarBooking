@@ -55,6 +55,12 @@ exports.createBook = asyncErrorHandler(async (req, res, next) => {
   } = req.body;
   //check required fields
 
+  // need to add isAdmin
+  const isExist = await Booking.findOne({ seatNumber, bookingDate, carTime });
+  if (isExist) {
+    return next(new CustomError('Seat is already booked', 400));
+  }
+
   if (!userName) {
     return next(new CustomError('Please provide your name', 400));
   }

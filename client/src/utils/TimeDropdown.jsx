@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 const TimeDropdown = ({ setChosenTime }) => {
+  console.log('TimeDropdown rendered');
   const [times] = useState(['6:00', '6:05', '6:10', '6:15', '6:20']);
 
   const handleChooseTime = (event) => {
@@ -24,4 +25,4 @@ const TimeDropdown = ({ setChosenTime }) => {
   );
 };
 
-export default TimeDropdown;
+export default React.memo(TimeDropdown);

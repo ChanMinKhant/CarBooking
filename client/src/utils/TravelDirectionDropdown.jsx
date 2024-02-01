@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 
 const TravelDirectionDropdown = ({ setChosenDirection }) => {
+  console.log('TravelDirectionDropdown rendered');
   const directions = ['Yangon → Pyay', 'Pyay → Yangon'];
 
   const handleChooseDirection = (event) => {
@@ -25,4 +26,4 @@ const TravelDirectionDropdown = ({ setChosenDirection }) => {
   );
 };
 
-export default TravelDirectionDropdown;
+export default React.memo(TravelDirectionDropdown);

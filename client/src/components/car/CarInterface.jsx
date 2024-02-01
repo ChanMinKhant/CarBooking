@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   checkSeatAvailability,
   createBook,
@@ -13,6 +13,7 @@ const CarInterface = ({
   data: { chosenDirection, choseDate, chosenTime },
   isAdmin,
 }) => {
+  console.log('CarInterface rendered');
   const [availableSeats, setAvailableSeats] = useState([1, 2, 3, 4]);
   const [pendingSeats, setPendingSeats] = useState([]); // [1, 2, 3, 4
   const [open, setOpen] = useState(false);
@@ -21,12 +22,9 @@ const CarInterface = ({
     phoneNumber: '',
     pickupLocation: '',
     deliveryLocation: '',
-    seatNumber: 0,
+    seatNumber: null,
     message: '',
   });
-  console.log(isAdmin);
-  const dateParts = choseDate.split('/');
-  const isoDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
   const [isApproved, setIsApproved] = useState(false);
 
   useEffect(() => {
@@ -56,18 +54,14 @@ const CarInterface = ({
 
   const [approvedBookings, setApprovedBookings] = useState([]);
 
-  console.log('approvedSeats: ', approvedBookings);
-
   useEffect(() => {
     getApprovedSeats().then((data) => setApprovedBookings(data));
   }, []);
 
   const isSeatApproved = (seatNum) => {
     const approvedSeats = approvedBookings.map((item) => item.seatNumber);
-    console.log('approved seats: ', approvedSeats);
     return approvedSeats.includes(seatNum);
   };
-  console.log('isSeatApproved: ', isSeatApproved(4));
 
   const addDataToBook = (data) => {
     setBook({ ...book, ...data });
@@ -75,7 +69,6 @@ const CarInterface = ({
 
   const postToServer = async () => {
     try {
-      console.log('booking');
       const res = await createBook(book);
       toast.success('Booking successful', {
         position: 'top-center',
@@ -88,10 +81,11 @@ const CarInterface = ({
     }
   };
 
-  const handleSeat = (seatNum) => {
+  const handleSeat = useCallback((seatNum) => {
     setBook({ ...book, seatNumber: seatNum });
     setOpen(true);
-  };
+  }, [book, setBook, setOpen]);
+  
 
   return (
     <div className='flex flex-col justify-center items-center m-5'>
@@ -102,7 +96,6 @@ const CarInterface = ({
         open={open}
         setOpen={setOpen}
         isAdmin={isAdmin}
-        seatNum={book.seatNumber}
         book={book}
       />
       <div className='border border-red-600 p-2 rounded-xl shadow-lg flex flex-col items-start justify-center gap-2'>
