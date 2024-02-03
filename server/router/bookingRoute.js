@@ -7,12 +7,9 @@ const { verifyJWT } = require('./../middleware/verifyJWT');
 // router.put('/booking/:id', bookingController.updateBooking)
 // router.delete('/booking/:id', bookingController.deleteBooking)
 router.get('/checkseat', bookingController.checkseat);
-router.post('/book', bookingController.createBook);
-
-router.route('/pendingseats').get(verifyJWT, bookingController.getPendingSeats);
-router
-  .route('/approvedseats')
-  .get(verifyJWT, bookingController.getApprovedSeats);
+router.post('/create-book', bookingController.createBook);
+router.route('/get-all-bookings').get(verifyJWT, bookingController.getBookings);
 router.route('/approve/:id').put(verifyJWT, bookingController.approveBooking);
 router.route('/cancle/:id').put(verifyJWT, bookingController.cancleBooking);
+
 module.exports = router;

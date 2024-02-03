@@ -33,6 +33,8 @@ exports.checkseat = asyncErrorHandler(async (req, res, next) => {
     );
   });
 
+  const approvedSeats = [];
+
   res.status(200).json({
     success: true,
     availableSeats,
@@ -144,30 +146,6 @@ exports.getBookings = asyncErrorHandler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     existingBookings,
-  });
-});
-
-// "http://api-url/:id"
-exports.getPendingSeats = asyncErrorHandler(async (req, res, next) => {
-  const pendingBookings = await Booking.find({ isApproved: false });
-  if (!pendingBookings) {
-    throw new CustomError('Booking not found', 404);
-  }
-  res.status(200).json({
-    success: true,
-    pendingBookings,
-  });
-});
-
-// "http://api-url/:id"
-exports.getApprovedSeats = asyncErrorHandler(async (req, res, next) => {
-  const approvedBookings = await Booking.find({ isApproved: true });
-  if (!approvedBookings) {
-    throw new CustomError('Booking not found', 404);
-  }
-  res.status(200).json({
-    success: true,
-    approvedBookings,
   });
 });
 
