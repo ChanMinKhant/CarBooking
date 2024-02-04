@@ -60,3 +60,14 @@ export const cancelBooking = async (id) => {
     throw error;
   }
 };
+
+export const getFormData = async (date, time, from, seatNumber) => {
+  try {
+    const response = await apiService.get(
+      `/get-booking-data-for-form?date=${date}&time=${time}&from=${from}&seatNumber=${seatNumber}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

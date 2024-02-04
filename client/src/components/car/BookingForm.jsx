@@ -8,6 +8,7 @@ const BookingForm = ({
   setOpen,
   isAdmin,
   book,
+  setDefaultBook,
 }) => {
   console.log('BookingForm rendered');
   const [pendingSeats, setPendingSeats] = useState([]);
@@ -15,24 +16,8 @@ const BookingForm = ({
     (item) => item.seatNumber === book.seatNumber
   );
 
-  const handleName = (evt) => {
-    addDataToBook({ userName: evt.target.value });
-  };
-
-  const handlePhoneNumber = (evt) => {
-    addDataToBook({ phoneNumber: evt.target.value });
-  };
-
-  const handlePickupLocation = (evt) => {
-    addDataToBook({ pickupLocation: evt.target.value });
-  };
-
-  const handleDeliveryLocation = (evt) => {
-    addDataToBook({ deliveryLocation: evt.target.value });
-  };
-
-  const handleMessage = (evt) => {
-    addDataToBook({ message: evt.target.value });
+  const handleInputChange = (property, evt) => {
+    addDataToBook({ [property]: evt.target.value });
   };
 
   const handleApproveBooking = () => {
@@ -51,14 +36,19 @@ const BookingForm = ({
     if (isAdmin) tempFunc();
   }, [book.seatNumber]);
 
-  if (open)
+  if (open) {
     return (
       <div
         className={`absolute z-50 w-[80vw] h-auto border border-gray-100 bg-white shadow-lg rounded-lg flex flex-col justify-center items-center p-5 m-5 ${
           open ? '' : 'hidden'
         }`}
       >
-        <button onClick={() => setOpen(false)}>
+        <button
+          onClick={() => {
+            setOpen(false);
+            setDefaultBook();
+          }}
+        >
           <svg
             xmlns='http://www.w3.org/2000/svg'
             viewBox='0 0 24 24'
@@ -78,7 +68,7 @@ const BookingForm = ({
           <h1>Name:</h1>
           <input
             defaultValue={relevantBookingData ? relevantBookingData.name : ''}
-            onChange={handleName}
+            onChange={(evt) => handleInputChange('userName', evt)}
             type='text'
             className='w-[64vw] h-[5vh] bg-gray-200 rounded-lg p-2 focus:outline-orange-300'
           />
@@ -89,7 +79,7 @@ const BookingForm = ({
             defaultValue={
               relevantBookingData ? relevantBookingData.phoneNumber : ''
             }
-            onChange={handlePhoneNumber}
+            onChange={(evt) => handleInputChange('phoneNumber', evt)}
             type='text'
             className='w-[64vw] h-[5vh] bg-gray-200 rounded-lg p-2 focus:outline-orange-300'
           />
@@ -100,7 +90,7 @@ const BookingForm = ({
             defaultValue={
               relevantBookingData ? relevantBookingData.pickupLocation : ''
             }
-            onChange={handlePickupLocation}
+            onChange={(evt) => handleInputChange('pickupLocation', evt)}
             type='text'
             className='w-[64vw] h-[5vh] bg-gray-200 rounded-lg p-2 focus:outline-orange-300'
           />
@@ -111,7 +101,7 @@ const BookingForm = ({
             defaultValue={
               relevantBookingData ? relevantBookingData.deliveryLocation : ''
             }
-            onChange={handleDeliveryLocation}
+            onChange={(evt) => handleInputChange('deliveryLocation', evt)}
             type='text'
             className='w-[64vw] h-[5vh] bg-gray-200 rounded-lg p-2 focus:outline-orange-300'
           />
@@ -122,7 +112,7 @@ const BookingForm = ({
             defaultValue={
               relevantBookingData ? relevantBookingData.message : ''
             }
-            onChange={handleMessage}
+            onChange={(evt) => handleInputChange('message', evt)}
             type='text'
             className='w-[64vw] h-[5vh] bg-gray-200 rounded-lg p-2 focus:outline-orange-300'
           />
@@ -143,6 +133,7 @@ const BookingForm = ({
         )}
       </div>
     );
+  }
 };
 
 export default BookingForm;

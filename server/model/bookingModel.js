@@ -40,6 +40,10 @@ const bookingSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  isArchived: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const Booking = mongoose.model('Booking', bookingSchema);

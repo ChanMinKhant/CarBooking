@@ -21,24 +21,25 @@ exports.checkseat = asyncErrorHandler(async (req, res, next) => {
     return next(new CustomError('Please provide a valid from', 400));
   }
 
-  const Bookings = await Booking.find(query);
+  const Bookings = await Booking.find({ ...query, isArchived: false });
 
   const pendingSeats = Bookings.filter((booking) => !booking.isApproved).map(
     (booking) => booking.seatNumber
   );
-
+  const approvedSeats = Bookings.filter((booking) => booking.isApproved).map(
+    (booking) => booking.seatNumber
+  );
   const availableSeats = [1, 2, 3, 4].filter((seat) => {
     return !Bookings.some(
       (booking) => booking.seatNumber === seat && booking.isApproved
     );
   });
 
-  const approvedSeats = [];
-
   res.status(200).json({
     success: true,
     availableSeats,
     pendingSeats,
+    approvedSeats,
   });
 });
 
@@ -149,6 +150,35 @@ exports.getBookings = asyncErrorHandler(async (req, res, next) => {
   });
 });
 
+exports.getBookingDataForForm = asyncErrorHandler(async (req, res, next) => {
+  const { date, time, from, seatNumber } = req.query;
+  if (!date || !time || !from || !seatNumber) {
+    return next(
+      new CustomError('Please provide date, time, from and seatNumber', 400)
+    );
+  }
+  let query = { bookingDate: date, carTime: time, seatNumber: seatNumber };
+  if (from === 'yangon') {
+    query = { ...query, travelDirection: 'Yangon → Pyay' };
+  } else if (from === 'pyay') {
+    query = { ...query, travelDirection: 'Pyay → Yangon' };
+  } else {
+    return next(new CustomError('Please provide a valid from', 400));
+  }
+  const existingBooking = await Booking(query);
+
+  if (!existingBooking) {
+    // i make this for the frontend to check if the seat is available or not
+    return res.status(200).json({
+      success: false,
+    });
+  }
+  res.status(200).json({
+    success: true,
+    data: existingBooking,
+  });
+});
+
 // "http://api-url/:id"
 exports.approveBooking = asyncErrorHandler(async (req, res, next) => {
   const { id } = req.params;
@@ -161,15 +191,15 @@ exports.approveBooking = asyncErrorHandler(async (req, res, next) => {
   if (!updatedBooking) {
     throw new CustomError('Booking not found', 404);
   }
-  res
+  return res
     .status(200)
     .json({ success: true, message: 'Booking approved', updatedBooking });
 });
 
 // "http://api-url/:id"
-exports.cancleBooking = asyncErrorHandler(async (req, res, next) => {
+exports.cancelBooking = asyncErrorHandler(async (req, res, next) => {
   const { id } = req.params;
-  // search booking by id and delete booking
-  await Booking.findByIdAndDelete(id);
-  res.status(200).json({ success: true, message: 'Booking cancle' });
+  // search booking by id and update isArchived field to true
+  await Booking.findByIdAndUpdate(id, { isArchived: true });
+  return res.status(200).json({ success: true, message: 'Booking cancelled' });
 });
