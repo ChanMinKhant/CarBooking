@@ -27,6 +27,9 @@ const CarInterface = ({
   const [pendingSeats, setPendingSeats] = useState([]); // [1, 2, 3, 4]
   const [approvedSeats, setApprovedSeats] = useState([]);
   const [open, setOpen] = useState(false);
+  //clicked is used to check if the button is clicked or not if clicked then run the tempFunc for admin
+  //to get the seats data and show as default
+  const [clicked, setClicked] = useState(false);
   const [book, setBook] = useState({
     ...defaultBook,
     travelDirection: '',
@@ -35,9 +38,6 @@ const CarInterface = ({
   });
   console.log('book', book);
 
-  console.log('pendingSeats', pendingSeats);
-  console.log('approvedSeats', approvedSeats);
-  console.log('availableSeats', availableSeats);
   useEffect(() => {
     const tempFunc = async () => {
       if (choseDate) {
@@ -90,6 +90,7 @@ const CarInterface = ({
     (seatNum) => {
       setBook({ ...book, seatNumber: seatNum });
       setOpen(true);
+      setClicked(true);
     },
     [book, setBook, setOpen]
   );

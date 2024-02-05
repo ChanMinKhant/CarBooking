@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { approveBooking, getPendingSeats } from '../../service/bookingService';
+import { approveBooking } from '../../service/bookingService';
+import { getBookingDataForForm } from '../../service/bookingService';
 
 const BookingForm = ({
   addDataToBook,
@@ -10,31 +11,28 @@ const BookingForm = ({
   book,
   setDefaultBook,
 }) => {
-  console.log('BookingForm rendered');
-  const [pendingSeats, setPendingSeats] = useState([]);
-  const relevantBookingData = pendingSeats.find(
-    (item) => item.seatNumber === book.seatNumber
-  );
+  //if clicked the button, and isAdmin is true, then run tempFunc so that to get the filled form data
+  // if (clicked && isAdmin) {
+  //   tempFunc();
+  // }
+
+  const tempFunc = async () => {
+    try {
+      const res = await getBookingDataForForm(
+        book.bookingDate,
+        book.carTime,
+        book.travelDirection
+      );
+      // setPendingSeats(res);
+      console.log('pendingSeats:', res);
+    } catch (err) {
+      console.log(err.response.data.message);
+    }
+  };
 
   const handleInputChange = (property, evt) => {
     addDataToBook({ [property]: evt.target.value });
   };
-
-  const handleApproveBooking = () => {
-    const relevantBooking = pendingSeats.find(
-      (item) => item.seatNumber === book.seatNumber
-    );
-    if (!relevantBooking) return alert('No booking pending on that seat!'); // we can improve this later for ux
-    const res = approveBooking(relevantBooking._id).then(() => setOpen(false));
-  };
-
-  useEffect(() => {
-    const tempFunc = async () => {
-      const res = await getPendingSeats();
-      setPendingSeats(res);
-    };
-    if (isAdmin) tempFunc();
-  }, [book.seatNumber]);
 
   if (open) {
     return (
@@ -67,7 +65,7 @@ const BookingForm = ({
         <div className='m-2'>
           <h1>Name:</h1>
           <input
-            defaultValue={relevantBookingData ? relevantBookingData.name : ''}
+            // defaultValue={relevantBookingData ? relevantBookingData.name : ''}
             onChange={(evt) => handleInputChange('userName', evt)}
             type='text'
             className='w-[64vw] h-[5vh] bg-gray-200 rounded-lg p-2 focus:outline-orange-300'
@@ -76,9 +74,9 @@ const BookingForm = ({
         <div className='m-2'>
           <h1>Phone number:</h1>
           <input
-            defaultValue={
-              relevantBookingData ? relevantBookingData.phoneNumber : ''
-            }
+            // defaultValue={
+            //   relevantBookingData ? relevantBookingData.phoneNumber : ''
+            // }
             onChange={(evt) => handleInputChange('phoneNumber', evt)}
             type='text'
             className='w-[64vw] h-[5vh] bg-gray-200 rounded-lg p-2 focus:outline-orange-300'
@@ -87,9 +85,9 @@ const BookingForm = ({
         <div className='m-2'>
           <h1>Location to pick you up:</h1>
           <input
-            defaultValue={
-              relevantBookingData ? relevantBookingData.pickupLocation : ''
-            }
+            // defaultValue={
+            //   relevantBookingData ? relevantBookingData.pickupLocation : ''
+            // }
             onChange={(evt) => handleInputChange('pickupLocation', evt)}
             type='text'
             className='w-[64vw] h-[5vh] bg-gray-200 rounded-lg p-2 focus:outline-orange-300'
@@ -98,9 +96,9 @@ const BookingForm = ({
         <div className='m-2'>
           <h1>Your destination:</h1>
           <input
-            defaultValue={
-              relevantBookingData ? relevantBookingData.deliveryLocation : ''
-            }
+            // defaultValue={
+            //   relevantBookingData ? relevantBookingData.deliveryLocation : ''
+            // }
             onChange={(evt) => handleInputChange('deliveryLocation', evt)}
             type='text'
             className='w-[64vw] h-[5vh] bg-gray-200 rounded-lg p-2 focus:outline-orange-300'
@@ -109,9 +107,9 @@ const BookingForm = ({
         <div className='m-2'>
           <h1>Leave us a message:</h1>
           <input
-            defaultValue={
-              relevantBookingData ? relevantBookingData.message : ''
-            }
+            // defaultValue={
+            //   relevantBookingData ? relevantBookingData.message : ''
+            // }
             onChange={(evt) => handleInputChange('message', evt)}
             type='text'
             className='w-[64vw] h-[5vh] bg-gray-200 rounded-lg p-2 focus:outline-orange-300'
@@ -125,7 +123,7 @@ const BookingForm = ({
         </button>
         {isAdmin && (
           <button
-            onClick={handleApproveBooking}
+            // onClick={handleApproveBooking}
             className='m-2 bg-orange-500 hover:bg-orange-300 text-white w-auto rounded-full p-2'
           >
             Approve

@@ -157,15 +157,18 @@ exports.getBookingDataForForm = asyncErrorHandler(async (req, res, next) => {
       new CustomError('Please provide date, time, from and seatNumber', 400)
     );
   }
-  let query = { bookingDate: date, carTime: time, seatNumber: seatNumber };
-  if (from === 'yangon') {
-    query = { ...query, travelDirection: 'Yangon → Pyay' };
-  } else if (from === 'pyay') {
-    query = { ...query, travelDirection: 'Pyay → Yangon' };
-  } else {
+  if (from !== 'Yangon → Pyay' && from !== 'Pyay → Yangon') {
     return next(new CustomError('Please provide a valid from', 400));
   }
-  const existingBooking = await Booking(query);
+  let query = {
+    bookingDate: date,
+    carTime: time,
+    seatNumber: seatNumber,
+    travelDirection: from,
+    isArchived: false,
+  };
+
+  const existingBooking = await Booking.find(query);
 
   if (!existingBooking) {
     // i make this for the frontend to check if the seat is available or not

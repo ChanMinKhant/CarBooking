@@ -61,8 +61,15 @@ export const cancelBooking = async (id) => {
   }
 };
 
-export const getFormData = async (date, time, from, seatNumber) => {
+export const getBookingDataForForm = async (date, time, from, seatNumber) => {
   try {
+    if (from === 'Yangon → Pyay') {
+      from = 'yangon';
+    } else if (from === 'Pyay → Yangon') {
+      from = 'pyay';
+    } else {
+      throw new Error('Please provide a valid from');
+    }
     const response = await apiService.get(
       `/get-booking-data-for-form?date=${date}&time=${time}&from=${from}&seatNumber=${seatNumber}`
     );
