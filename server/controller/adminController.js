@@ -2,6 +2,8 @@ const asyncErrorHandler = require('./../util/asyncErrorHandler');
 const CustomError = require('./../util/CustomError');
 const Admin = require('./../model/adminModel');
 const Token = require('./../model/tokenModel');
+const Booking = require('./../model/bookingModel');
+const comparePassword = require('./../util');
 const jwt = require('jsonwebtoken');
 
 // create admin account
@@ -98,5 +100,64 @@ exports.logoutAll = asyncErrorHandler(async (req, res, next) => {
   res.clearCookie('jwt');
   res.status(200).json({
     success: true,
+  });
+});
+
+exports.approveByEmail = asyncErrorHandler(async (req, res, next) => {
+  const { id, token } = req.params;
+  const booking = await Booking.findById(id);
+  if (!booking || booking.isArchived) {
+    const err = new CustomError('No booking found', 404);
+    return next(err);
+  }
+  const isTokenCorrect = await booking.compareToken(token);
+  if (!isTokenCorrect) {
+    const err = new CustomError('Invalid token', 400);
+    return next(err);
+  }
+  booking.isApproved = true;
+  await booking.save();
+  res.status(200).json({
+    success: true,
+    message: 'Booking approved',
+  });
+});
+
+exports.cancelByEmail = asyncErrorHandler(async (req, res, next) => {
+  const { id, token } = req.params;
+  const booking = await Booking.findById(id);
+  if (!booking || booking.isArchived) {
+    const err = new CustomError('No booking found', 404);
+    return next(err);
+  }
+  const isTokenCorrect = await booking.compareToken(token);
+  if (!isTokenCorrect) {
+    const err = new CustomError('Invalid token', 400);
+    return next(err);
+  }
+  booking.isApproved = false;
+  await booking.save();
+  res.status(200).json({
+    success: true,
+    message: 'Booking cancelled',
+  });
+});
+
+exports.deleteByEmail = asyncErrorHandler(async (req, res, next) => {
+  const { id, token } = req.params;
+  const booking = await Booking.findById(id);
+  if (!booking || booking.isArchived) {
+    const err = new CustomError('No booking found', 404);
+    return next(err);
+  }
+  const isTokenCorrect = await booking.compareToken(token);
+  if (!isTokenCorrect) {
+    const err = new CustomError('Invalid token', 400);
+    return next(err);
+  }
+  await booking.delete();
+  res.status(200).json({
+    success: true,
+    message: 'Booking deleted',
   });
 });

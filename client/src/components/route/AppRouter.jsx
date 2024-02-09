@@ -3,6 +3,9 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import App from './../../App';
 import AdminLoginForm from './../admin/AdminLoginForm';
 import AdminApproveForm from './../admin/AdminApproveForm';
+import CancelByEmail from '../email/CancelByEmail';
+import ApproveByEmail from '../email/ApproveByEmail';
+import DeleteByEmail from '../email/DeleteByEmail';
 
 const AppRouter = () => {
   const routes = [
@@ -20,6 +23,21 @@ const AppRouter = () => {
       id: 3,
       path: '/admin',
       component: <AdminApproveForm />,
+    },
+    {
+      id: 4,
+      path: '/admin/approve/:id/:token',
+      component: <ApproveByEmail />,
+    },
+    {
+      id: 5,
+      path: '/admin/cancel/:id/:token',
+      component: <CancelByEmail />,
+    },
+    {
+      id: 6,
+      path: '/admin/delete:id/:token',
+      component: <DeleteByEmail />,
     },
   ];
 

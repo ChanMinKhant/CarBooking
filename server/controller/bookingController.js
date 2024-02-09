@@ -1,6 +1,8 @@
 const asyncErrorHandler = require('./../util/asyncErrorHandler');
 const Booking = require('./../model/bookingModel');
+const bcrypt = require('bcryptjs');
 const CustomError = require('./../util/CustomError');
+const { sendEmail, EmailTemplate } = require('./../util/index');
 
 //"http://api-url/checkseat/?date=20-01-2004&time=7:00?from=yangon" or "from=pyay"
 // i need to check the date and time is not in 7:00, 9:00, 11:00, 13:00, 15:00, 17:00, 19:00 , valid or not
@@ -59,7 +61,12 @@ exports.createBook = asyncErrorHandler(async (req, res, next) => {
   //check required fields
 
   // need to add isAdmin
-  const isExist = await Booking.findOne({ seatNumber, bookingDate, carTime });
+  const isExist = await Booking.findOne({
+    seatNumber,
+    bookingDate,
+    carTime,
+    isArchived: false,
+  });
   if (isExist) {
     return next(new CustomError('Seat is already booked', 400));
   }
@@ -112,6 +119,11 @@ exports.createBook = asyncErrorHandler(async (req, res, next) => {
     return next(new CustomError('Please provide your seat', 400));
   }
 
+  const token = Math.random().toString(36).substring(7);
+  console.log('Token:', token);
+  const hashedToken = await bcrypt.hash(token, 10);
+  console.log('HashedToken:', hashedToken);
+
   const data = {
     userName,
     phoneNumber,
@@ -122,10 +134,21 @@ exports.createBook = asyncErrorHandler(async (req, res, next) => {
     carTime,
     bookingDate,
     message,
+    tokenHash: hashedToken,
   };
   //save to database
   const booking = await Booking.create(data);
   //sentEmail to admin to approve
+  const approveToken = `${process.env.CLIENT_URL}/admin/approve/${booking._id}/${token}`;
+  const deleteToken = `${process.env.CLIENT_URL}/admin/delete/${booking._id}/${token}`;
+  console.log(approveToken, deleteToken);
+  const emailTemplate = EmailTemplate(booking, deleteToken, approveToken);
+
+  sendEmail({
+    email: 'cmktempmail2264@gmail.com',
+    subject: 'New Booking',
+    message: emailTemplate,
+  });
 
   res.status(201).json({
     success: true,
@@ -157,9 +180,6 @@ exports.getBookingDataForForm = asyncErrorHandler(async (req, res, next) => {
       new CustomError('Please provide date, time, from and seatNumber', 400)
     );
   }
-  if (from !== 'Yangon → Pyay' && from !== 'Pyay → Yangon') {
-    return next(new CustomError('Please provide a valid from', 400));
-  }
   let query = {
     bookingDate: date,
     carTime: time,
@@ -167,14 +187,19 @@ exports.getBookingDataForForm = asyncErrorHandler(async (req, res, next) => {
     travelDirection: from,
     isArchived: false,
   };
-
+  if (from === 'yangon') {
+    query = { ...query, travelDirection: 'Yangon → Pyay' };
+  } else if (from === 'pyay') {
+    query = { ...query, travelDirection: 'Pyay → Yangon' };
+  } else {
+    return next(new CustomError('Please provide a valid from', 400));
+  }
+  console.log(query);
   const existingBooking = await Booking.find(query);
-
-  if (!existingBooking) {
+  if (existingBooking.length === 0) {
+    console.log('here');
     // i make this for the frontend to check if the seat is available or not
-    return res.status(200).json({
-      success: false,
-    });
+    return next(new CustomError('Booking not found', 404));
   }
   res.status(200).json({
     success: true,
@@ -202,7 +227,26 @@ exports.approveBooking = asyncErrorHandler(async (req, res, next) => {
 // "http://api-url/:id"
 exports.cancelBooking = asyncErrorHandler(async (req, res, next) => {
   const { id } = req.params;
+  console.log(id);
   // search booking by id and update isArchived field to true
-  await Booking.findByIdAndUpdate(id, { isArchived: true });
+  const book = await Booking.findById(id);
+  if (!book || book.isArchived) {
+    throw new CustomError('Booking not found', 404);
+  }
+  book.isApproved = false;
+  await book.save();
+
   return res.status(200).json({ success: true, message: 'Booking cancelled' });
+});
+
+exports.deleteBooking = asyncErrorHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const deletedBooking = await Booking.findByIdAndUpdate(
+    id,
+    { isArchived: true },
+    { new: true }
+  );
+  return res
+    .status(200)
+    .json({ success: true, message: 'Booking deleted', deletedBooking });
 });

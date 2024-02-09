@@ -61,6 +61,15 @@ export const cancelBooking = async (id) => {
   }
 };
 
+export const deleteBooking = async (id) => {
+  try {
+    const response = await apiService.put(`/delete/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getBookingDataForForm = async (date, time, from, seatNumber) => {
   try {
     if (from === 'Yangon → Pyay') {

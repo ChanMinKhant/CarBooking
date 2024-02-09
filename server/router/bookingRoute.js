@@ -13,6 +13,6 @@ router
   .route('/get-booking-data-for-form')
   .get(verifyJWT, bookingController.getBookingDataForForm);
 router.route('/approve/:id').put(verifyJWT, bookingController.approveBooking);
-router.route('/cancle/:id').put(verifyJWT, bookingController.cancelBooking);
-
+router.route('/cancel/:id').put(verifyJWT, bookingController.cancelBooking);
+router.route('/delete/:id').put(verifyJWT, bookingController.deleteBooking);
 module.exports = router;

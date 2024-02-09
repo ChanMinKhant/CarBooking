@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const bookingSchema = new mongoose.Schema({
   userName: {
@@ -36,6 +37,9 @@ const bookingSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  message: {
+    type: String,
+  },
   isApproved: {
     type: Boolean,
     default: false,
@@ -44,7 +48,25 @@ const bookingSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  tokenHash: {
+    type: String,
+    required: true,
+  },
 });
+
+// bookingSchema.pre('save', async function (next) {
+//   // Generate random token
+//   const token = Math.random().toString(36).substring(7);
+//   // /Hash token using bcrypt/;
+//   const hashedToken = await bcrypt.hash(token, 10); // You can adjust the salt rounds as needed
+//   console.log('Token:', token);
+//   this.tokenHash = hashedToken;
+//   next();
+// });
+
+bookingSchema.methods.compareToken = async function (token) {
+  return await bcrypt.compare(token, this.tokenHash);
+};
 
 const Booking = mongoose.model('Booking', bookingSchema);
 

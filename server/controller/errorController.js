@@ -10,6 +10,7 @@ const devError = (err, res) => {
 };
 
 const prodError = (err, res) => {
+  console.log(err);
   if (err.isOperational) {
     return res.status(err.statusCode).json({
       status: err.status,

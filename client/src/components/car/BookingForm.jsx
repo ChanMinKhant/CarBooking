@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
-import { approveBooking } from '../../service/bookingService';
-import { getBookingDataForForm } from '../../service/bookingService';
+import {
+  getBookingDataForForm,
+  cancelBooking,
+  approveBooking,
+  deleteBooking,
+} from '../../service/bookingService';
 
 const BookingForm = ({
   addDataToBook,
@@ -9,29 +13,67 @@ const BookingForm = ({
   setOpen,
   isAdmin,
   book,
+  setBook,
+  clicked,
+  setClicked,
   setDefaultBook,
 }) => {
-  //if clicked the button, and isAdmin is true, then run tempFunc so that to get the filled form data
-  // if (clicked && isAdmin) {
-  //   tempFunc();
-  // }
-
   const tempFunc = async () => {
     try {
       const res = await getBookingDataForForm(
         book.bookingDate,
         book.carTime,
-        book.travelDirection
+        book.travelDirection,
+        book.seatNumber
       );
-      // setPendingSeats(res);
-      console.log('pendingSeats:', res);
+      if (res.data.length === 0) {
+        console.log('Booking not found');
+      }
+      setBook(res.data[0]);
+      console.log('dfsdfsdfsdfsdfsdfsdfsdddddddddddd');
+      setClicked(false);
     } catch (err) {
-      console.log(err.response.data.message);
+      console.log(err.response?.data?.message);
     }
   };
+  //if clicked the button, and isAdmin is true, then run tempFunc so that to get the filled form data
+  //this is not good bcz every time the component re-render, it will run this function
+
+  useEffect(() => {
+    if (clicked && isAdmin) {
+      tempFunc();
+    }
+  }, [clicked, isAdmin]);
 
   const handleInputChange = (property, evt) => {
     addDataToBook({ [property]: evt.target.value });
+  };
+
+  const handleApproveBooking = async () => {
+    try {
+      const res = await approveBooking(book?._id);
+      console.log(res);
+    } catch (err) {
+      console.log(err.response?.data?.message);
+    }
+  };
+
+  const handleCancleBooking = async () => {
+    try {
+      const res = await cancelBooking(book?._id);
+      console.log(res);
+    } catch (err) {
+      console.log(err.response?.data?.message);
+    }
+  };
+
+  const handleDeleteBooking = async () => {
+    try {
+      const res = await deleteBooking(book?._id);
+      console.log(res);
+    } catch (err) {
+      console.log(err.response?.data?.message);
+    }
   };
 
   if (open) {
@@ -44,6 +86,7 @@ const BookingForm = ({
         <button
           onClick={() => {
             setOpen(false);
+            setClicked(false);
             setDefaultBook();
           }}
         >
@@ -65,7 +108,7 @@ const BookingForm = ({
         <div className='m-2'>
           <h1>Name:</h1>
           <input
-            // defaultValue={relevantBookingData ? relevantBookingData.name : ''}
+            defaultValue={book?.userName ? book.userName : ''}
             onChange={(evt) => handleInputChange('userName', evt)}
             type='text'
             className='w-[64vw] h-[5vh] bg-gray-200 rounded-lg p-2 focus:outline-orange-300'
@@ -74,9 +117,7 @@ const BookingForm = ({
         <div className='m-2'>
           <h1>Phone number:</h1>
           <input
-            // defaultValue={
-            //   relevantBookingData ? relevantBookingData.phoneNumber : ''
-            // }
+            defaultValue={book?.phoneNumber ? book?.phoneNumber : ''}
             onChange={(evt) => handleInputChange('phoneNumber', evt)}
             type='text'
             className='w-[64vw] h-[5vh] bg-gray-200 rounded-lg p-2 focus:outline-orange-300'
@@ -85,9 +126,7 @@ const BookingForm = ({
         <div className='m-2'>
           <h1>Location to pick you up:</h1>
           <input
-            // defaultValue={
-            //   relevantBookingData ? relevantBookingData.pickupLocation : ''
-            // }
+            defaultValue={book?.pickupLocation ? book?.pickupLocation : ''}
             onChange={(evt) => handleInputChange('pickupLocation', evt)}
             type='text'
             className='w-[64vw] h-[5vh] bg-gray-200 rounded-lg p-2 focus:outline-orange-300'
@@ -96,9 +135,7 @@ const BookingForm = ({
         <div className='m-2'>
           <h1>Your destination:</h1>
           <input
-            // defaultValue={
-            //   relevantBookingData ? relevantBookingData.deliveryLocation : ''
-            // }
+            defaultValue={book?.deliveryLocation ? book?.deliveryLocation : ''}
             onChange={(evt) => handleInputChange('deliveryLocation', evt)}
             type='text'
             className='w-[64vw] h-[5vh] bg-gray-200 rounded-lg p-2 focus:outline-orange-300'
@@ -107,9 +144,7 @@ const BookingForm = ({
         <div className='m-2'>
           <h1>Leave us a message:</h1>
           <input
-            // defaultValue={
-            //   relevantBookingData ? relevantBookingData.message : ''
-            // }
+            defaultValue={book?.message ? book?.message : ''}
             onChange={(evt) => handleInputChange('message', evt)}
             type='text'
             className='w-[64vw] h-[5vh] bg-gray-200 rounded-lg p-2 focus:outline-orange-300'
@@ -121,12 +156,25 @@ const BookingForm = ({
         >
           Book
         </button>
+        {isAdmin &&
+          (book.isApproved ? (
+            <button
+              onClick={handleCancleBooking}
+              className='m-2 bg-orange-500 hover:bg-orange-300 text-white w-auto rounded-full p-2'
+            >
+              Cancle
+            </button>
+          ) : (
+            <button
+              onClick={handleApproveBooking}
+              className='m-2 bg-orange-500 hover:bg-orange-300 text-white w-auto rounded-full p-2'
+            >
+              Approve
+            </button>
+          ))}
         {isAdmin && (
-          <button
-            // onClick={handleApproveBooking}
-            className='m-2 bg-orange-500 hover:bg-orange-300 text-white w-auto rounded-full p-2'
-          >
-            Approve
+          <button className='bg-orange-300' onClick={handleDeleteBooking}>
+            delete
           </button>
         )}
       </div>

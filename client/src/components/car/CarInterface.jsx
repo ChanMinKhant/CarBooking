@@ -105,6 +105,9 @@ const CarInterface = ({
         setOpen={setOpen}
         isAdmin={isAdmin}
         book={book}
+        setBook={setBook}
+        clicked={clicked}
+        setClicked={setClicked}
         setDefaultBook={setDefaultBook}
       />
       <div className='border border-red-600 p-2 rounded-xl shadow-lg flex flex-col items-start justify-center gap-2'>
