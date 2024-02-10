@@ -76,8 +76,10 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
       Date.now() + (process.env.COOKIE_EXPIRES_IN || 20) * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
-    secure: process.env.NODE_ENV.trim() === 'production' ? true : false,
+    secure: true,
+    path: '/',
   });
+
   res.status(200).json({
     success: true,
     token,
