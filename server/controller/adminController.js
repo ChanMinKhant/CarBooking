@@ -77,8 +77,7 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
     ),
     httpOnly: true,
     secure: true,
-    path: '/',
-    domain: 'https://carbookingapp.onrender.com',
+    domain: '.vercel.app',
   });
 
   res.status(200).json({
