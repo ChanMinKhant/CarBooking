@@ -77,7 +77,7 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
     ),
     httpOnly: true,
     secure: true,
-    domain: ``,
+    sameSite: 'none',
   });
 
   res.status(200).json({
