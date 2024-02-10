@@ -78,7 +78,7 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
     httpOnly: true,
     secure: true,
     path: '/',
-    domain: process.env.CLIENT_URL,
+    domain: 'https://carbookingapp.onrender.com',
   });
 
   res.status(200).json({
