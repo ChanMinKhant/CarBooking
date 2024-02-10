@@ -10,7 +10,7 @@ const morgan = require('morgan');
 
 // Database
 dbConnect();
-
+console.log(process.env.NODE_ENV);
 // Middleware
 app.use(
   cors({

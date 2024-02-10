@@ -77,6 +77,8 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
     ),
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production' ? true : false,
+    path: '/',
+    domain: process.env.CLIENT_URL,
   });
   res.status(200).json({
     success: true,
