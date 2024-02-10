@@ -77,7 +77,7 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
     ),
     httpOnly: true,
     secure: true,
-    domain: '.vercel.app',
+    domain: ``,
   });
 
   res.status(200).json({
