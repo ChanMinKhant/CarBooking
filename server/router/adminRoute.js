@@ -5,6 +5,7 @@ const { verifyJWT } = require('./../middleware/verifyJWT');
 
 //verifyJWT
 router.route('/login').post(adminController.login);
+router.route('/logout').get(adminController.logout);
 router.use(verifyJWT);
 router
   .route('/bookings')
